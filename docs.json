@@ -84,8 +84,8 @@
     }
   },
   "logo": {
-    "light": "logo/Pandorian-Logo.png",
-    "dark": "logo/Pandorian-Logo.png"
+    "light": "/logo/Pandorian-Logo.png",
+    "dark": "/logo/Pandorian-Logo.png"
   },
   "navbar": {
     "links": [
