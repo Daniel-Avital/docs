@@ -1,4 +1,7 @@
-# Getting Started
+---
+title: 'Quick Start'
+description: 'Get up and running with Pandorian in minutes'
+---
 
 This guide will walk you through setting up Pandorian and experiencing the core value: writing an engineering guideline in plain English, running a scan, and finding violations instantly.
 
