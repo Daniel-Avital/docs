@@ -16,6 +16,8 @@
           {
             "group": "Getting started",
             "pages": [
+              "essentials/introduction",
+      "snippets/pandorian-core-concepts"
               "index",
               "quickstart",
               "development"
