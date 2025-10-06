@@ -17,9 +17,8 @@
             "group": "Getting started",
             "pages": [
               "essentials/pandorian-introduction",
-              "essentials/pandorian-core-concepts",
-              "quickstart",
-              "development"
+              "essentials/pandorian-core-concepts"
+           
             ]
           },
           {
