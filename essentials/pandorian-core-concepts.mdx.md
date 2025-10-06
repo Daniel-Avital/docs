@@ -1,3 +1,8 @@
+---
+title: 'Core Concepts'
+description: 'Understanding how Pandorian works'
+---
+
 # Core Concepts
 
 ## What is a Guideline?
