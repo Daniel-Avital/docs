@@ -29,22 +29,42 @@
       "anchors": [
         
       ]
-    },
-  
+    }
+  },
   "logo": {
     "light": "/Pandorian-Logo.png",
     "dark": "/Pandorian-Logo.png"
   },
   "navbar": {
     "links": [
-     
+      {
+        "label": "Support",
+        "href": "mailto:hi@mintlify.com"
+      }
     ],
-    
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://dashboard.mintlify.com"
+    }
   },
-  
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
   "footer": {
     "socials": {
-      "linkedin": "https://www.linkedin.com/company/pandorian-ai/"
+      "x": "https://x.com/mintlify",
+      "github": "https://github.com/mintlify",
+      "linkedin": "https://linkedin.com/company/mintlify"
     }
   }
 }
