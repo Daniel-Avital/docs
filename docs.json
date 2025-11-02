@@ -9,10 +9,7 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
+    "groups": [
           {
             "group": "Getting started",
             "pages": [
@@ -22,9 +19,7 @@
               "essentials/pandorian-integration-guides"
             ]
           }
-        ]
-      }
-    ],
+        ],
     "global": {
       "anchors": []
     }
