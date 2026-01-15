@@ -207,6 +207,162 @@ workflows:
 
 Choose your mode by adjusting the final step's exit code behavior.
 
+## Policy as Code
+
+Policy as Code lets you configure repository-level enforcement policy directly in Git, so Pandorian knows which guidelines to run and when to block pull requests - without requiring you to set these rules outside your codebase.
+
+The policy is defined inside the repo (using the `.Pandorian/.policy` file), and we apply it on every full / PR scan.
+
+### Example Policy
+
+```yaml
+repository_guidelines_tags:
+  - guideline_tag: v2
+
+severity_thresholds:
+  - severity: High
+    block_on_greater: 1
+  - severity: Critical
+    block_on_greater: 2
+  - severity: Medium
+    block_on_greater: 5
+```
+
+### What this configuration means
+
+* **Scan scope:** Scan this repository only for guidelines tagged with `v2`.
+* **Enforcement:** For scan results, Pandorian uses severity thresholds to decide when to block the PR (merge-gating).
+
+Specifically:
+
+* **High:** Block when there are more than 1 High findings.
+* **Critical:** Block when there are more than 2 Critical findings.
+* **Medium:** Block when there are more than 5 Medium findings.
+
+### Repository Policy Schema
+
+The following schema defines the policy rules available for a specific repository.
+
+```yaml
+# RepositoryPolicy Schema
+# Defines policy rules for a specific repository within an organization
+
+# Unique identifier for the repository this policy applies to.
+# Links the policy configuration to a specific codebase.
+repository_id: string  # required
+
+# Severity threshold rules that determine when the system should warn or block.
+# Used to enforce code quality gates based on issue severity counts.
+severity_thresholds:  # optional
+  # The severity level this threshold applies to (e.g., "critical", "high", "medium", "low").
+  - severity: string
+    # Number of issues at this severity that triggers a blocking error.
+    # If the count exceeds this value, the check fails.
+    block_on_greater: int
+
+# Rules for excluding files or directories from analysis.
+# Useful for ignoring vendor code, generated files, or other paths that shouldn't be scanned.
+exclusions:  # optional
+    # The matching strategy to use:
+    #    - exact:   Matches files where the filename exactly equals the value
+    #    - prefix:  Matches files where the filename starts with the value
+    #    - suffix:  Matches files where the full path ends with the value (e.g., ".gen.go")
+    #    - dir:     Matches if any directory component in the path equals the value (e.g., "vendor", "node_modules")
+    #    - pattern: Uses glob pattern matching against the filename (e.g., "*.test.js")
+  - type: string
+    # The value to match against, interpreted based on the type above.
+    value: string
+    # Whether the match should be case-sensitive.
+    # When false, both path and value are lowercased before comparison.
+    case_sensitive: bool
+
+# Rules for associating guidelines with this repository based on tags.
+# Allows selective application of organizational guidelines to specific repos.
+repository_guidelines_tags:  # optional
+  # The tag identifier that links to a set of guidelines.
+  # Guidelines with matching tags will be applied during analysis.
+  - guideline_tag: string
+```
+
+### Comprehensive Configuration Example
+
+This example demonstrates a full `.Pandorian/.policy` file configuration including guideline tagging, severity thresholds, and exclusion rules.
+
+```yaml
+# Repository Policy Configuration Example
+# ========================================
+
+# Guidelines Configuration
+# ------------------------
+# This repository will be analyzed using guidelines tagged with "v2".
+# Only guidelines that have the "v2" tag will be applied during code analysis.
+repository_guidelines_tags:
+  - guideline_tag: v2
+
+# Severity Thresholds
+# -------------------
+# These thresholds define the quality gates for this repository.
+# The system evaluates issue counts against these rules to determine pass/fail status.
+severity_thresholds:
+  # High Severity: Strict enforcement
+  # Blocks the pipeline if more than 1 High severity issue is found (i.e., 2+)
+  - severity: High
+    block_on_greater: 1
+
+  # Critical Severity: Slightly more lenient count, but still important
+  # Blocks if more than 2 Critical issues are found (i.e., 3+)
+  - severity: Critical
+    block_on_greater: 2
+
+  # Medium Severity: More permissive threshold
+  # Blocks only if more than 5 Medium issues are found (i.e., 6+)
+  - severity: Medium
+    block_on_greater: 5
+
+# Exclusion Rules
+# ---------------
+# These rules define which files/directories should be skipped during analysis.
+# Useful for ignoring third-party code, generated files, or test fixtures.
+exclusions:
+  # Exclude all vendor directories (common in Go projects)
+  # Matches any path containing a "vendor" directory component
+  # e.g., "src/vendor/pkg/file.go", "vendor/module/main.go"
+  - type: dir
+    value: vendor
+    case_sensitive: true
+
+  # Exclude generated protobuf files
+  # Matches any file ending with ".pb.go"
+  # e.g., "api/service.pb.go", "proto/messages.pb.go"
+  - type: suffix
+    value: .pb.go
+    case_sensitive: true
+
+  # Exclude all test files using glob pattern
+  # Matches filenames like "user_test.go", "handler_test.go"
+  - type: pattern
+    value: "*_test.go"
+    case_sensitive: true
+
+  # Exclude node_modules directory (for JS/TS projects)
+  # Matches any path with "node_modules" as a directory component
+  - type: dir
+    value: node_modules
+    case_sensitive: true
+
+  # Exclude a specific generated file by exact name
+  # Only matches files named exactly "generated_mocks.go"
+  - type: exact
+    value: generated_mocks.go
+    case_sensitive: true
+
+  # Exclude all files starting with a dot (hidden files)
+  # Matches ".gitignore", ".eslintrc", etc.
+  - type: prefix
+    value: "."
+    case_sensitive: false
+```
+
 ## Slack Integration
 
 Get notified when scans complete and violations are found.
