@@ -211,27 +211,28 @@ The instructions are context-aware, meaning they consider:
 
 Whether you implement fixes manually or use an AI tool to generate them, the markdown provides the complete context needed. Some violations require architectural decisions or business logic understanding that only developers can provide.
 
-### False Positives and False Negatives
+## Feedback & Accuracy
 
-No static analysis system achieves perfect accuracy. While Pandorian's AI-powered approach significantly improves detection compared to traditional tools, you may occasionally encounter both false positives and false negatives.
+No static analysis system achieves perfect accuracy immediately. While Pandorian's AI-powered approach significantly improves detection compared to traditional tools, you may occasionally encounter inaccuracies.
 
-**False Positives:** Legitimate code flagged as a violation. This happens when the AI identifies a pattern that matches the guideline but doesn't understand specific context that makes the code acceptable.
+Pandorian provides a feedback loop to help you tune results for your specific codebase, reducing noise and reinforcing the patterns your team cares about.
 
-When this occurs:
-- **Refine the guideline:** Update the guideline description to clarify exceptions and provide more context about when the pattern is acceptable
-- **Contact support:** Share the false positive with our team to help improve detection accuracy (coming soon: mark violations as accepted directly in the UI)
-- **Temporary workaround:** Document accepted violations in your team's guidelines (coming soon: exclusion rules to skip specific patterns or files during scans)
+### Violation Feedback Actions
 
-**False Negatives:** Violations that should be detected but aren't. This can happen when code violates the spirit of a guideline using patterns the AI hasn't yet learned to recognize.
+You can interact with scan findings using three actions to train the system:
 
-When you discover false negatives:
-- **Refine the guideline:** Make the description more explicit about patterns to detect
-- **Provide examples:** Add specific code examples in the guideline description
-- **Report patterns:** Let Pandorian know about missed patterns to improve detection
+* **Like:** "This finding is correct / useful". Use this to confirm that a violation is valid and the guideline is working as intended.
+* **Dislike:** "This is wrong / not relevant". Use this to flag False Positives. This signals to Pandorian that the pattern detected should not have been flagged in this context.
+* **Mark as Favorite:** "Keep this finding / track it / revisit later". Use this to bookmark findings that you cannot fix immediately but want to retain for future review.
 
-Your feedback in both cases trains the system. Over time, the AI learns your codebase's specific patterns and context, improving accuracy for your organization's unique needs.
+> **Note:** "Mark as Favorite" acts strictly as a bookmark for tracking purposes; it does not suppress the finding or alter the baseline.
 
----
+### Understanding Accuracy & Refinement
+
+#### False Positives
+These are legitimate code patterns flagged as violations because the AI lacks specific context.
+
+* **Primary Action:** Use the **Dislike** button. This feedback informs the enforcement model for your entire organization.
 
 ## Use Cases: Making the Unautomatable Automatic
 
