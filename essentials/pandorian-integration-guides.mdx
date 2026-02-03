@@ -76,6 +76,74 @@ Pandorian uses **direct API calls** to trigger scans and retrieve results. This 
 - How failures are handled (block pipeline, send notifications, generate reports)
 - Which guidelines to enforce in different environments
 
+## Guidelines as Code
+### Learn how to sync engineering standards directly from your repository
+---
+
+While you can create guidelines via the Pandorian Dashboard, many high-velocity teams prefer to manage their standards directly within their code repositories. This "Guidelines as Code" approach allows you to treat your engineering requirements as "breathing documentation" that evolves alongside your features.
+
+If your team already uses tools like Claude Skills or internal markdown files to guide AI coding assistants, you can sync those same files to Pandorian. This ensures that the rules your AI uses to write code are the exact same rules Pandorian uses to validate code at the Pull Request level / Full Codebase scans.
+
+## How it Works
+
+1. **Source Selection**: You designate a specific repository and a "base directory" (e.g., `/docs/guidelines`) where your standards live.
+2. **Automated Sync**: Pandorian monitors this directory for `.md` files.
+3. **Enforcement**: Any change to these files automatically updates the active guidelines in Pandorian, which are then enforced across all your associated repositories during scans.
+
+## File Structure & Metadata
+
+To be recognized by Pandorian, each Markdown file must contain a YAML frontmatter block. This block includes a `pandorian-metadata` section that maps the file to the Pandorian engine.
+
+### Required Metadata Attributes
+
+| Attribute   | Type    | Description                                                                 |
+|-------------|---------|-----------------------------------------------------------------------------|
+| `id`        | string  | A unique identifier for the guideline (e.g., `scala-expert`).               |
+| `language`  | string  | The target language (e.g., `scala`, `python`, `all`).                       |
+| `title`     | string  | The clear, actionable name of the rule.                                     |
+| `priority`  | string  | The importance level (e.g., `high`, `medium`, `low`).                       |
+| `category`  | string  | The area of focus (e.g., `security`, `performance`, `architecture`).        |
+| `is_active` | boolean | Toggle whether this guideline is currently being enforced.                  |
+| `tags`      | list    | A list of strings for easier filtering and organization.                    |
+
+## Implementation Example
+
+Create a file named `scala-expert.md` in your designated guidelines directory:
+```markdown
+---
+name: scala-expert
+description: Guidelines for functional Scala 2.13.
+pandorian-metadata:
+  id: scala-expert
+  language: scala
+  title: Scala Functional Programming Expert
+  priority: high
+  category: code-quality
+  is_active: true
+  tags: [scala, functional-programming, cats, fs2]
+---
+
+# Scala Functional Programming Standards
+
+You are an elite Scala developer. When writing or reviewing code, ensure:
+- **Immutability First**: Always use `val` over `var` and prefer immutable collections.
+- **Referential Transparency**: Effects must be properly tracked in the type system using `IO`.
+- **Resource Management**: Use `Resource` for anything requiring cleanup (e.g., database connections).
+
+### Prohibited Patterns
+- Never use `null`. Use `Option` instead.
+- Avoid `Thread.sleep`; use `IO.sleep` for non-blocking delays.
+```
+
+## Configuration Steps
+
+1. Navigate to **Settings > Guideline Sync** in the Pandorian Dashboard
+2. Select the repository containing your `.md` files
+3. Provide the top-level directory path (e.g., `/docs/guidelines`)
+4. Save to trigger an initial scan and import your guidelines
+
+Any subsequent commits to these files will trigger an update in Pandorian, ensuring your PR enforcement is always in sync with your latest standards.
+
 ### GitHub Actions Integration
 
 Here's an example workflow that runs Pandorian scans on every push and blocks the pipeline if violations are found:
@@ -209,73 +277,6 @@ Choose your mode by adjusting the final step's exit code behavior.
 
 ---
 
-## Guidelines as Code
-### Learn how to sync engineering standards directly from your repository
----
-
-While you can create guidelines via the Pandorian Dashboard, many high-velocity teams prefer to manage their standards directly within their code repositories. This "Guidelines as Code" approach allows you to treat your engineering requirements as "breathing documentation" that evolves alongside your features.
-
-If your team already uses tools like Claude Skills or internal `skills.md` files to guide AI coding assistants, you can sync those same files to Pandorian. This ensures that the rules your AI uses to write code are the exact same rules Pandorian uses to validate code at the Pull Request level.
-
-## How it Works
-
-1. **Source Selection**: You designate a specific repository and a "base directory" (e.g., `/docs/guidelines`) where your standards live.
-2. **Automated Sync**: Pandorian monitors this directory for `.md` files.
-3. **Enforcement**: Any change to these files automatically updates the active guidelines in Pandorian, which are then enforced across all your associated repositories during scans.
-
-## File Structure & Metadata
-
-To be recognized by Pandorian, each Markdown file must contain a YAML frontmatter block. This block includes a `pandorian-metadata` section that maps the file to the Pandorian engine.
-
-### Required Metadata Attributes
-
-| Attribute   | Type    | Description                                                                 |
-|-------------|---------|-----------------------------------------------------------------------------|
-| `id`        | string  | A unique identifier for the guideline (e.g., `scala-expert`).               |
-| `language`  | string  | The target language (e.g., `scala`, `python`, `all`).                       |
-| `title`     | string  | The clear, actionable name of the rule.                                     |
-| `priority`  | string  | The importance level (e.g., `high`, `medium`, `low`).                       |
-| `category`  | string  | The area of focus (e.g., `security`, `performance`, `architecture`).        |
-| `is_active` | boolean | Toggle whether this guideline is currently being enforced.                  |
-| `tags`      | list    | A list of strings for easier filtering and organization.                    |
-
-## Implementation Example
-
-Create a file named `scala-expert.md` in your designated guidelines directory:
-```markdown
----
-name: scala-expert
-description: Guidelines for functional Scala 2.13.
-pandorian-metadata:
-  id: scala-expert
-  language: scala
-  title: Scala Functional Programming Expert
-  priority: high
-  category: code-quality
-  is_active: true
-  tags: [scala, functional-programming, cats, fs2]
----
-
-# Scala Functional Programming Standards
-
-You are an elite Scala developer. When writing or reviewing code, ensure:
-- **Immutability First**: Always use `val` over `var` and prefer immutable collections.
-- **Referential Transparency**: Effects must be properly tracked in the type system using `IO`.
-- **Resource Management**: Use `Resource` for anything requiring cleanup (e.g., database connections).
-
-### Prohibited Patterns
-- Never use `null`. Use `Option` instead.
-- Avoid `Thread.sleep`; use `IO.sleep` for non-blocking delays.
-```
-
-## Configuration Steps
-
-1. Navigate to **Settings > Guideline Sync** in the Pandorian Dashboard
-2. Select the repository containing your `.md` files
-3. Provide the top-level directory path (e.g., `/docs/guidelines`)
-4. Save to trigger an initial scan and import your guidelines
-
-Any subsequent commits to these files will trigger an update in Pandorian, ensuring your PR enforcement is always in sync with your latest standards.
 ## Policy as Code 
  
 Policy as Code lets you configure repository-level enforcement policy directly in Git, so Pandorian knows which guidelines to run and when to block pull requests - without requiring you to set these rules outside your codebase.
