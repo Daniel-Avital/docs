@@ -88,7 +88,7 @@ If your team already uses tools like Claude Skills or internal markdown files to
 
 1. **Source Selection**: In the 'Integrations' tab you designate a specific repository and a "base directory" (e.g., `/docs/guidelines`) where your standards live.
 2. **Automated Sync**: Pandorian monitors this directory for `.md` files.
-3. **Enforcement**: Any change to these files automatically updates the active guidelines in Pandorian, which are then enforced across all your associated repositories during scans.
+3. **Enforcement**: Any change to these files triggers an update in Pandorian upon every merge to the main branch. These updated guidelines are then immediately enforced across all your associated repositories during scans.
 
 ## File Structure & Metadata
 
