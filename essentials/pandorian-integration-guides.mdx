@@ -315,12 +315,11 @@ workflows:
 Choose your mode by adjusting the final step's exit code behavior.
 
 ---
-
 ## Guideline Tags
 
 Tags serve two purposes: general-purpose filtering/organization, and **guideline grouping** for holistic analysis.
 
-#### General Tags
+### General Tags
 
 Tags are free-form strings you can use to filter and organize guidelines. They're used in Policy as Code to control which guidelines apply to specific repositories in addition to filtering and organizing.
 
@@ -329,7 +328,7 @@ pandorian-metadata:
   tags: [api, v2, backend]
 ```
 
-#### Grouping Tags
+### Grouping Tags
 
 Tags that start with `grouping:` have special behavior. They tell Pandorian to analyze the tagged guidelines **together as a unified guideline set** rather than independently.
 
