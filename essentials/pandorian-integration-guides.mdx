@@ -316,6 +316,83 @@ Choose your mode by adjusting the final step's exit code behavior.
 
 ---
 
+### Guideline Tags
+
+Tags serve two purposes: general-purpose filtering/organization, and **guideline grouping** for holistic analysis.
+
+#### General Tags
+
+Tags are free-form strings you can use to filter and organize guidelines. They're used in Policy as Code to control which guidelines apply to specific repositories in addition to filtering and organizing.
+
+```yaml
+pandorian-metadata:
+  tags: [api, v2, backend]
+```
+
+#### Grouping Tags
+
+Tags that start with `grouping:` have special behavior. They tell Pandorian to analyze the tagged guidelines **together as a unified guideline set** rather than independently.
+
+**Format:** `grouping:<group_name>`
+
+```yaml
+# guideline-a.md
+pandorian-metadata:
+  tags: [grouping:error-handling]
+
+# guideline-b.md
+pandorian-metadata:
+  tags: [grouping:error-handling]
+```
+
+**What this does:**
+
+During analysis, guidelines that share the same `grouping:` tag are evaluated in the model together. The model evaluates the code against all guidelines in the group holistically. Violations are still reported under each individual guideline.
+
+**When to use grouping:**
+
+Use grouping when you have guidelines that are semantically related and understanding one is important for correctly evaluating another. For example, a set of guidelines about error handling patterns where "wrap errors with context" and "use structured logging for errors" should be considered together — a function that wraps errors correctly but logs them incorrectly should be evaluated with full awareness of both guidelines.
+
+**A guideline can belong to multiple groups:**
+
+```yaml
+pandorian-metadata:
+  tags: [grouping:error-handling, grouping:observability]
+```
+
+This guideline will appear in both the `error-handling` group analysis and the `observability` group analysis.
+
+**Example:**
+
+```yaml
+# secure-api-auth.md
+pandorian-metadata:
+  id: secure-api-auth
+  language: python
+  title: API Authentication Required
+  category: Security
+  is_active: true
+  tags: [grouping:api-security, v2]
+---
+All API endpoints must require authentication...
+
+# secure-api-input.md
+pandorian-metadata:
+  id: secure-api-input
+  language: python
+  title: API Input Validation
+  category: Security
+  is_active: true
+  tags: [grouping:api-security, v2]
+---
+All API endpoints must validate and sanitize input parameters...
+```
+
+Both guidelines share `grouping:api-security`, so when Pandorian analyzes a code snippet, it evaluates both rules together. The model sees both guidelines in the same analysis and can reason about their combined intent.
+Apollo
+
+---
+
 ## Policy as Code 
  
 Policy as Code lets you configure repository-level enforcement policy directly in Git, so Pandorian knows which guidelines to run and when to block pull requests - without requiring you to set these rules outside your codebase.
