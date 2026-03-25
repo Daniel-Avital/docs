@@ -42,14 +42,14 @@ When violations are found on a PR:
 
 **Inline Comments (Optional):**
 - Appear directly on the lines of code that violate guidelines
-- Include the guideline name, severity, and brief explanation
+- Include the guideline name, enforcement mode (Block/Monitor), and brief explanation
 - Link back to the full guideline in Pandorian dashboard
 Note: This feature can be toggled on or off depending on your team's preference.
 
 **Summary Comment:**
 - Posted at the PR level with a complete list of violations
 - Grouped by file and guideline
-- Includes violation counts and severity breakdown
+- Includes violation counts and enforcement breakdown (Blocked vs. Monitored)
 
 **Status Check:**
 - Appears in GitHub's checks section
@@ -101,7 +101,7 @@ To be recognized by Pandorian, each Markdown file must contain a YAML frontmatte
 | `id`        | string  | A unique identifier for the guideline (e.g., `scala-expert`).               |
 | `language`  | string  | The target language (e.g., `scala`, `python`, `etc`).                       |
 | `title`     | string  | The clear, actionable name of the rule.                                     |
-| `priority`  | string  | The importance level (e.g., `high`, `medium`, `low`).                       |
+| `block   `  | bolean  | Set to true to block the build/PR if this guideline is violated. If false or omitted, defaults to monitor mode.|
 | `category`  | string  | The area of focus (e.g., `security`, `performance`, `architecture`).        |
 | `is_active` | boolean | Toggle whether this guideline is currently being enforced.                  |
 | `tags`      | list    | A list of strings for easier filtering and organization.                    |
@@ -156,7 +156,7 @@ pandorian-metadata:
   id: scala-expert
   language: scala
   title: Scala Functional Programming Expert
-  priority: high
+  block: true
   category: code-quality
   is_active: true
   tags: [scala, functional-programming, cats, fs2]
@@ -327,26 +327,12 @@ The policy is defined inside the repo (using the `.Pandorian/.policy` file), and
 ```yaml
 repository_guidelines_tags:
   - guideline_tag: v2
-
-severity_thresholds:
-  - severity: High
-    block_on_greater: 1
-  - severity: Critical
-    block_on_greater: 2
-  - severity: Medium
-    block_on_greater: 5
 ```
 
 ### What this configuration means
 
 * **Scan scope:** Scan this repository only for guidelines tagged with `v2`.
-* **Enforcement:** For scan results, Pandorian uses severity thresholds to decide when to block the PR (merge-gating).
-
-Specifically:
-
-* **High:** Block when there are more than 1 High findings.
-* **Critical:** Block when there are more than 2 Critical findings.
-* **Medium:** Block when there are more than 5 Medium findings.
+* **Enforcement:** Whether a violation blocks the PR or just monitors it is determined by the block field defined inside each individual guideline's metadata.
 
 ### Repository Policy Schema
 
@@ -359,15 +345,6 @@ The following schema defines the policy rules available for a specific repositor
 # Unique identifier for the repository this policy applies to.
 # Links the policy configuration to a specific codebase.
 repository_id: string  # required
-
-# Severity threshold rules that determine when the system should warn or block.
-# Used to enforce code quality gates based on issue severity counts.
-severity_thresholds:  # optional
-  # The severity level this threshold applies to (e.g., "critical", "high", "medium", "low").
-  - severity: string
-    # Number of issues at this severity that triggers a blocking error.
-    # If the count exceeds this value, the check fails.
-    block_on_greater: int
 
 # Rules for excluding files or directories from analysis.
 # Useful for ignoring vendor code, generated files, or other paths that shouldn't be scanned.
@@ -395,7 +372,7 @@ repository_guidelines_tags:  # optional
 
 ### Comprehensive Configuration Example
 
-This example demonstrates a full `.Pandorian/.policy` file configuration including guideline tagging, severity thresholds, and exclusion rules.
+This example demonstrates a full `.Pandorian/.policy` file configuration including guideline tagging and exclusion rules.
 
 ```yaml
 # Repository Policy Configuration Example
@@ -408,25 +385,6 @@ This example demonstrates a full `.Pandorian/.policy` file configuration includi
 repository_guidelines_tags:
   - guideline_tag: v2
 
-# Severity Thresholds
-# -------------------
-# These thresholds define the quality gates for this repository.
-# The system evaluates issue counts against these rules to determine pass/fail status.
-severity_thresholds:
-  # High Severity: Strict enforcement
-  # Blocks the pipeline if more than 1 High severity issue is found (i.e., 2+)
-  - severity: High
-    block_on_greater: 1
-
-  # Critical Severity: Slightly more lenient count, but still important
-  # Blocks if more than 2 Critical issues are found (i.e., 3+)
-  - severity: Critical
-    block_on_greater: 2
-
-  # Medium Severity: More permissive threshold
-  # Blocks only if more than 5 Medium issues are found (i.e., 6+)
-  - severity: Medium
-    block_on_greater: 5
 
 # Exclusion Rules
 # ---------------
