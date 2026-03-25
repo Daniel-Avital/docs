@@ -31,7 +31,6 @@ PR scanning is controlled at the **individual guideline level**, giving you gran
 3. Look for the **Enforce On** field (or scan level configuration)
 4. Choose the scope:
    - **Full Scan** - Runs only during manual full repository scans
-   - **Repository Scan** - Runs during repository scans (same as Full)
    - **PR Scan** - Runs automatically on every pull request
    - **All** - Runs on both full scans and PR scans (recommended for most guidelines)
 
@@ -41,10 +40,11 @@ PR scanning is controlled at the **individual guideline level**, giving you gran
 
 When violations are found on a PR:
 
-**Inline Comments:**
+**Inline Comments (Optional):**
 - Appear directly on the lines of code that violate guidelines
 - Include the guideline name, severity, and brief explanation
 - Link back to the full guideline in Pandorian dashboard
+Note: This feature can be toggled on or off depending on your team's preference.
 
 **Summary Comment:**
 - Posted at the PR level with a complete list of violations
@@ -315,82 +315,6 @@ workflows:
 Choose your mode by adjusting the final step's exit code behavior.
 
 ---
-## Guideline Tags
-
-Tags serve two purposes: general-purpose filtering/organization, and **guideline grouping** for holistic analysis.
-
-### General Tags
-
-Tags are free-form strings you can use to filter and organize guidelines. They're used in Policy as Code to control which guidelines apply to specific repositories in addition to filtering and organizing.
-
-```yaml
-pandorian-metadata:
-  tags: [api, v2, backend]
-```
-
-### Grouping Tags
-
-Tags that start with `grouping:` have special behavior. They tell Pandorian to analyze the tagged guidelines **together as a unified guideline set** rather than independently.
-
-**Format:** `grouping:<group_name>`
-
-```yaml
-# guideline-a.md
-pandorian-metadata:
-  tags: [grouping:error-handling]
-
-# guideline-b.md
-pandorian-metadata:
-  tags: [grouping:error-handling]
-```
-
-**What this does:**
-
-During analysis, guidelines that share the same `grouping:` tag are evaluated in the model together. The model evaluates the code against all guidelines in the group holistically. Violations are still reported under each individual guideline.
-
-**When to use grouping:**
-
-Use grouping when you have guidelines that are semantically related and understanding one is important for correctly evaluating another. For example, a set of guidelines about error handling patterns where "wrap errors with context" and "use structured logging for errors" should be considered together — a function that wraps errors correctly but logs them incorrectly should be evaluated with full awareness of both guidelines.
-
-**A guideline can belong to multiple groups:**
-
-```yaml
-pandorian-metadata:
-  tags: [grouping:error-handling, grouping:observability]
-```
-
-This guideline will appear in both the `error-handling` group analysis and the `observability` group analysis.
-
-**Example:**
-
-```yaml
-# secure-api-auth.md
-pandorian-metadata:
-  id: secure-api-auth
-  language: python
-  title: API Authentication Required
-  category: Security
-  is_active: true
-  tags: [grouping:api-security, v2]
----
-All API endpoints must require authentication...
-
-# secure-api-input.md
-pandorian-metadata:
-  id: secure-api-input
-  language: python
-  title: API Input Validation
-  category: Security
-  is_active: true
-  tags: [grouping:api-security, v2]
----
-All API endpoints must validate and sanitize input parameters...
-```
-
-Both guidelines share `grouping:api-security`, so when Pandorian analyzes a code snippet, it evaluates both rules together. The model sees both guidelines in the same analysis and can reason about their combined intent.
-Apollo
-
----
 
 ## Policy as Code 
  
@@ -558,24 +482,13 @@ Get notified when scans complete and violations are found.
 2. Click **Connect Slack**
 3. Authorize Pandorian to access your Slack workspace
 4. Choose which channel receives notifications
-5. Configure notification preferences:
-   - Scan completion (all scans or only failed scans)
-   - New violations found
-   - Scan summary reports
+5. Configure notification preferences to alert you when a scan is completed or failed.
 
 ### Notification Types
 
-**Scan Completion:**
-- Triggered when any scan finishes
-- Includes violation count, severity breakdown, and link to results
+**Scan Completed / Failed:**
+- Triggered when a scan finishes or fails to complete. Every alert includes a direct link to the detailed scan results in the Pandorian dashboard so you can quickly review the findings.
 
-**New Violations:**
-- Alerts when new violations are introduced (PR scans)
-- Shows file paths and guideline names
-
-**Daily/Weekly Summaries:**
-- Aggregated reports of organization-wide compliance
-- Trends and improvement metrics
 
 ## Enforcement Layer Positioning
 
@@ -621,10 +534,9 @@ Enable automatic PR scanning first—this gives developers immediate feedback wi
 **Use CI/CD for Critical Paths:**
 Add CI/CD integration for production deployments where you need absolute enforcement.
 
-**Configure Severity Appropriately:**
-- **High severity** → Block merges/deployments
-- **Medium severity** → Require review/acknowledgment
-- **Low severity** → Report only, don't block
+**Configure Enforcement Modes Appropriately:**
+- **Block** → Fails the pipeline and blocks merges/deployments when violations are detected. Use this for critical paths where absolute enforcement is required.
+- **Monitor** → Reports and tracks violations without blocking the pipeline. Use this for general visibility or during a gradual rollout.
 
 **Gradual Rollout:**
 When introducing Pandorian to an existing codebase, start in reporting mode, identify violation trends, then enable blocking gradually.
