@@ -429,6 +429,20 @@ exclusions:
     value: "."
     case_sensitive: false
 ```
+## Dynamic Context Providers
+
+Dynamic Context Providers allow you to connect external data sources directly to your guidelines, ensuring they evaluate your code against the latest, real-time context. Instead of hardcoding lists of approved configurations, libraries, or internal API routes into a static description, you can dynamically fetch them from your own endpoints. 
+
+By linking a guideline to a Dynamic Context Provider, you guarantee that your code is always validated against your single source of truth, even as your internal configurations evolve.
+
+### Configuring a Dynamic Context Provider
+
+You can set up a Dynamic Context Provider directly in the Pandorian UI. When creating or editing a guideline, simply add a provider and define how Pandorian should fetch and filter your external data:
+
+* **Title:** A descriptive name for the provider (e.g., "Approved Config Flags").
+* **Command:** The exact command Pandorian will execute to fetch the data, such as a `curl` request to your internal API or configuration server.
+* **Grep:** An optional regular expression used to filter the command's output. This ensures only the exact data you need is passed to the AI as context.
+* **Timeout:** The maximum time (in seconds) Pandorian should wait for your external source to respond before timing out.
 
 ## Slack Integration
 
