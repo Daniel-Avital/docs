@@ -25,7 +25,7 @@ Every guideline consists of:
 
 **Tags:** Metadata that helps organize and prioritize guidelines:
 - **Category** (Performance, Security, Configuration, Code Quality, etc.)
-- **Severity** (Low, Medium, High, Critical)
+- **Enforcement** (Block or Monitor)
 - **Language** (Python, Java, JavaScript, or language-agnostic)
 
 The AI Code Enforcer analyzes these components to understand intent and context, then searches your codebase for patterns that violate the guideline.
@@ -106,7 +106,7 @@ Enforcement happens across your development workflow:
 
 **IDE Integration (Coming Soon):** The VSCode plugin will show violations directly in your editor with inline context.
 
-**CI/CD Gates:** Configure pipelines to fail builds when high-severity violations are introduced, preventing issues from reaching production.
+**CI/CD Gates:** Configure pipelines to fail builds when blocking violations are introduced, preventing issues from reaching production.
 
 ---
 
@@ -136,7 +136,7 @@ You configure scan scope through repository settings, including file patterns to
 
 Each scan produces:
 
-**Violation Summary:** Total count by severity (Critical, High, Medium, Low), aggregated by guideline and by file.
+**Violation Summary:** Total count by enforcement mode (Block vs. Monitor), aggregated by guideline and by file.
 
 **Detailed Findings:** Individual violations with context, showing exactly where and why code violates guidelines.
 
@@ -166,7 +166,7 @@ A violation occurs when code doesn't comply with a guideline's requirements. Vio
 - A configuration approach that complicates deployment
 - An architectural decision that conflicts with team conventions
 
-The severity tag (Low, Medium, High, Critical) helps teams prioritize remediation. Critical violations might block deployments, while Low violations inform longer-term refactoring efforts.
+The enforcement mode (Block or Monitor) dictates how violations are handled. Guidelines set to Block will fail your CI/CD pipelines and prevent deployments, while those set to Monitor provide visibility to inform longer-term refactoring efforts without interrupting development.
 
 ### Understanding Violation Context
 
