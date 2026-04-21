@@ -154,6 +154,45 @@ Scan duration varies based on repository size, complexity, and the number of act
 
 Incremental PR scans are optimized for speed and typically provide feedback within a minute or two, ensuring fast development velocity. Full repository scans may take longer depending on codebase size, but are designed to run asynchronously without blocking your workflow.
 
+### Results by Guideline
+
+Every guideline has a dedicated stats page showing all violations detected across your organization, regardless of which scan or PR surfaced them. While [Scan Results](#scan-results) show what a single run found, this view flips the perspective: pick a guideline and see how that rule is performing across every repo, scan, and PR over time.
+
+**Accessing guideline results**
+
+From the **Guidelines** list, click any guideline to open its stats page. Guidelines with active violations display a violation count badge inline.
+
+**Stats overview**
+
+The top of the page shows three summary metrics:
+- **Total Violations** — the number of distinct violations found for this guideline across all scans
+- **Repos Affected** — how many repositories contain at least one violation
+- **Total PRs Scanned** — how many pull requests have been scanned against this guideline
+
+**Filtering violations**
+
+Use the filters at the top of the violations table to narrow results:
+- **Search** — filter by violation description or file name
+- **Repositories** — limit results to one or more specific repos
+- **File** — filter to a specific file path
+- **Time range** — scope results to a recent window or view all time
+
+**Violations table**
+
+Each row represents a single violation:
+
+| Column | Description |
+|---|---|
+| Violation | A summary of what was detected |
+| Repository | The repo where the violation was found |
+| File Path | The specific file containing the violation |
+| Type | The scan that surfaced it: **Full Scan** (with a "View scan →" link to the full scan results) or a numbered **PR** (e.g. PR #42, links directly to the pull request) |
+| Detected | When the violation was first recorded |
+
+**Expanding a violation**
+
+Click the arrow on any row to expand it. The expanded view shows a code snippet with the violating line highlighted in red, and a Violations panel on the right with a line-level explanation of why the code violates the guideline — giving you the context to understand and address each violation without leaving the page.
+
 ---
 
 ## Violations & Fixes
@@ -188,6 +227,8 @@ If the API endpoint changes between development, staging, and
 production, code changes are required instead of simple config updates.
 This violates deployment best practices and increases change risk.
 ```
+
+
 
 ### Generate Fix Feature
 
