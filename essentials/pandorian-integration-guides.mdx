@@ -459,6 +459,70 @@ Get notified when scans complete and violations are found.
 **Scan Completed / Failed:**
 - Triggered when a scan finishes or fails to complete. Every alert includes a direct link to the detailed scan results in the Pandorian dashboard so you can quickly review the findings.
 
+---
+
+## Jira Integration
+
+Connect Pandorian to Jira to create issues directly from scan results, turning guideline violations into actionable tickets without leaving the dashboard.
+
+
+### Setting Up Jira
+
+**Step 1 — Connect your Jira workspace**
+
+1. Navigate to **Integrations → Jira** in the Pandorian dashboard
+2. Click **Connect** and sign in via Atlassian (email, Google, or other connected account)
+3. Once authorized, the integration status will show **Configured**
+
+**Step 2 — Select your default Jira board**
+
+1. Under **Configuration**, open the **Jira Board** dropdown
+2. Select the board where issues will be created by default (e.g. Platform Engineering, Backend Services)
+3. Click **Save**
+
+This board is used as the default for all ticket creation. You can override it per ticket when creating an issue.
+
+
+### Creating a Jira Issue from a Guideline
+
+**Step 3 — Open a guideline's violations**
+
+From the **Guidelines** page, click the **Violations** badge on any guideline to open its violations tab. The tab shows all current open violations including total count, repos affected, and PRs scanned.
+
+A **Jira Issues Opened** counter is visible at the top right of the violations tab, showing how many tickets have already been created for this guideline.
+
+**Step 4 — Create the issue**
+
+Click **Create Issue** at the top of the violations tab. Pandorian automatically generates a ticket draft containing **all current open violations for that guideline in bulk** — you don't need to create a ticket per violation.
+
+**Step 5 — Review and submit**
+
+The **Create Jira Issue** form is pre-populated with:
+
+| Field | Details |
+|---|---|
+| **Summary** | Pre-filled; editable |
+| **Description** | Auto-generated from guideline details, violation count, category, and repository context; editable |
+| **Issue Type** | Defaults to Task; editable |
+| **Labels** | Optional; comma-separated |
+
+A **Ticket Preview** panel on the right shows the rendered output before submission. Review and edit as needed, then click **Create Jira Issue**.
+
+
+### Ticket History
+
+A dedicated **Tickets** page in Pandorian shows all issues you've opened in the past, so you can track what has been escalated without leaving the dashboard.
+
+
+### Ticket Lifecycle
+
+Pandorian does not automatically close, update, or comment on tickets. Once an issue is created, its lifecycle is managed entirely within Jira by your team.
+
+
+### Tips
+
+> **Archive violations before creating a ticket** — Any violations you archive before clicking Create Issue will not be included in the ticket. Use this to exclude noise or already-handled violations before escalating.
+
 
 ## Enforcement Layer Positioning
 
