@@ -1,41 +1,11 @@
+// TODO @amit refactor as a whole new section, if needed, by our own distinguished head of UX and Documentation
+// Consider remove all of this
 ---
+
+
+
 title: 'Core Concepts'
 description: 'Understanding how Pandorian works'
----
-
-## What is a Guideline?
-
-A guideline is a software development rule or best practice written in plain English that Pandorian's AI automatically enforces across your codebase. Instead of relying on code reviews to catch issues, or configuring complex static analysis tools with dozens of rules, you simply describe what you want in natural language.
-
-**Example Guidelines:**
-
-*"When initializing lists and dictionaries with known quantities, consider pre-sizing to reduce allocations and improve performance."*
-
-*"All configuration values including URLs, timeouts, limits, and paths must be externalized to configuration files or environment-specific sources rather than embedded directly in source code."*
-
-Guidelines capture your team's standards, architectural decisions, security requirements, and performance best practices in a centralized, enforceable format. They work across any programming language and automatically adapt to your codebase's specific context.
-
-### Anatomy of a Guideline
-
-Every guideline consists of:
-
-**Title:** A clear, actionable name that describes the rule (e.g., "Pre-size Collections When Possible" or "Hardcoded Configuration Values Must Be Eliminated")
-
-**Description:** Plain English explanation of what should or shouldn't happen in your code. This is where you define the rule in natural language, including context, reasoning, and any exceptions.
-
-**Tags:** Metadata that helps organize and prioritize guidelines:
-- **Category** (Performance, Security, Configuration, Code Quality, etc.)
-- **Enforcement** (Block or Monitor)
-- **Language** (Python, Java, JavaScript, or language-agnostic)
-
-The AI Code Enforcer analyzes these components to understand intent and context, then searches your codebase for patterns that violate the guideline.
-
-### Why Plain English Works
-
-Traditional static analysis tools require you to learn proprietary rule languages, configure complex patterns, or write custom checks. Pandorian inverts this model. You write guidelines the same way you'd explain them to a teammate: "Don't hardcode API keys," "Always validate user input before database queries," "Use connection pooling for database access."
-
-The AI handles the translation from intent to detection, adapting to different coding styles, frameworks, and contexts within your codebase. This means guidelines remain readable, maintainable, and accessible to your entire engineering organization, not just tooling experts.
-
 ---
 
 ## How Enforcement Works
@@ -55,82 +25,9 @@ This processing happens once per guideline, creating an enforcement model that's
 ### 2. Repository Scanning
 
 Scans can be triggered:
-- **On-demand** through the Pandorian dashboard
+- **On-demand via UI** through the Pandorian dashboard
 - **On Pull Requests** via GitHub App integration
-- **On a schedule** (daily, weekly, or custom intervals)
 - **Via CI/CD pipeline** using Pandorian's API
-
-During a scan, the AI Code Enforcer:
-- Parses your codebase's structure and dependencies
-- Analyzes code against all active guidelines
-- Identifies specific locations where violations occur
-- Generates contextual explanations for each finding
-- Provides fix generation capabilities where applicable
-
-Scans are incremental and optimized for large codebases. The system focuses computational resources on changed files in PR contexts while performing comprehensive analysis for scheduled scans.
-
-### 3. Violation Detection
-
-A violation is identified when code patterns conflict with a guideline's requirements. The AI doesn't just match syntax; it understands semantic meaning. For example, the "Hardcoded Configuration Values" guideline detects:
-
-```python
-# Violation detected
-API_URL = "https://api.example.com/v1"
-timeout = 30
-max_retries = 3
-```
-
-But correctly ignores constants that aren't configuration:
-
-```python
-# Not a violation - mathematical constant
-PI = 3.14159
-MAX_BATCH_SIZE = 100  # Business logic constant, not environment config
-```
-
-Each violation includes:
-- **Location:** File path, line numbers, and code snippet
-- **Explanation:** Why this code violates the guideline
-- **Impact:** Potential consequences (security risk, performance degradation, etc.)
-- **Fix generation:** Ability to generate context-aware remediation instructions
-
-### 4. Integration Points
-
-Enforcement happens across your development workflow:
-
-**Pull Request Checks:** Violations appear as PR comments with detailed context, allowing developers to address issues before merge.
-
-**Dashboard Review:** Engineering managers review aggregated violations and prioritize remediation efforts.
-
-**Feedback Mechanism (Coming Soon):** Mark violations as accepted, false positives, or provide feedback directly in the UI to help improve detection accuracy and document intentional exceptions.
-
-**IDE Integration (Coming Soon):** The VSCode plugin will show violations directly in your editor with inline context.
-
-**CI/CD Gates:** Configure pipelines to fail builds when blocking violations are introduced, preventing issues from reaching production.
-
----
-
-## Understanding Scans
-
-A scan is Pandorian's analysis of a repository against your active guidelines. Scans provide visibility into where your codebase diverges from established standards.
-
-### Scan Types
-
-**Full Scan:** Analyzes all repositories in your organization against all active guidelines. Best for comprehensive organizational audits, understanding technical debt across your entire codebase, and getting a complete view of standards compliance.
-
-**Repository Scan:** Analyzes a specific repository in its entirety against all active guidelines. Ideal for deep-diving into a particular codebase, onboarding new repositories, or conducting focused assessments of individual projects.
-
-**PR Scan:** Analyzes only the changes in a pull request against all active guidelines. Optimized for speed, these scans provide fast feedback during development without re-analyzing unchanged code.
-
-### What Gets Scanned
-
-Pandorian scans source code files across all languages in your repository. The system automatically:
-- Identifies file types and languages
-- Applies language-specific and language-agnostic guidelines
-- Respects `.gitignore` and Pandorian-specific exclusion rules
-- Focuses on application code (typically excludes `node_modules`, `vendor`, etc.)
-
-You configure scan scope through repository settings, including file patterns to include or exclude.
 
 ### Scan Results
 
