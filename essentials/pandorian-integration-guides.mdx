@@ -3,598 +3,336 @@ title: 'Integration Guides'
 description: 'Learn how to integrate Pandorian with your development workflow'
 ---
 
-Pandorian integrates into your existing development workflow to enforce guidelines continuously and automatically. This guide covers setting up PR scanning, CI/CD integration, notifications, and more.
+Pandorian integrates into your existing SDLC to enforce guidelines continuously and automatically. This guide covers PR scanning, CI/CD integration, repository policy, and notifications.
 
-## GitHub App & Pull Request Scanning
+## Source Control & Pull Request Scanning
 
-The fastest way to enforce guidelines is through automatic PR scanning via the GitHub App.
+The fastest way to enforce guidelines is through automatic PR scanning via your source control integration. Pandorian supports **GitHub**, **GitLab**, and **Azure DevOps**.
 
 ### How PR Scanning Works
 
-Once you install the Pandorian GitHub App (done during initial setup), you control PR scanning at the **guideline level**. This means you explicitly choose which guidelines should run automatically on pull requests.
+Once you connect your source control provider (done during initial setup), PR scanning is controlled at the **guideline level** — you explicitly choose which guidelines run on pull requests.
 
 **What happens during a PR scan:**
 
 1. Developer opens or updates a pull request
 2. Pandorian scans only the modified files against guidelines configured for PR scanning
-3. Violations appear in two places:
-   - **Inline comments** on specific lines of code where violations occur
-   - **Summary comment** on the PR with an overview of all violations found
-4. The PR check appears in GitHub's status checks (can be configured as required or optional)
+3. Violations appear as inline comments on specific lines and as a summary comment on the PR (if the client opted it in)
+4. The PR check appears in your source control's status checks (configurable as required or optional)
 
 ### Configuring Which Guidelines Run on PRs
 
-PR scanning is controlled at the **individual guideline level**, giving you granular control over what gets enforced and when. When creating or editing a guideline:
+When creating or editing a guideline, set the **Enforce On** field:
 
-1. Navigate to the **Guidelines** page
-2. Create or edit a guideline
-3. Look for the **Enforce On** field (or scan level configuration)
-4. Choose the scope:
-   - **Full Scan** - Runs only during manual full repository scans
-   - **PR Scan** - Runs automatically on every pull request
-   - **All** - Runs on both full scans and PR scans (recommended for most guidelines)
+- **Full Scan** — Runs only during manual full repository scans
+- **PR Scan** — Runs automatically on every pull request
+- **All** — Runs on both full scans and PR scans (recommended for most guidelines)
 
-**Best Practice:** Set critical guidelines (security, production-readiness, API design standards) to **PR Scan** or **All** to catch issues before they're merged. Use **Full Scan** for broader quality checks that don't need immediate PR enforcement.
+**Best Practice:** Set critical guidelines (security, production-readiness, API design) to **PR Scan** or **All**. Use **Full Scan** for broader quality checks that don't need immediate PR enforcement.
 
 ### Managing PR Scan Results
 
-When violations are found on a PR:
+When violations are found on a PR, results appear as inline comments on specific lines, a summary comment with an overview of all violations found, and a status check that can be configured as a required check to block merges.
 
-**Inline Comments (Optional):**
-- Appear directly on the lines of code that violate guidelines
-- Include the guideline name, enforcement mode (Block/Monitor), and brief explanation
-- Link back to the full guideline in Pandorian dashboard
-Note: This feature can be toggled on or off depending on your team's preference.
+### PR Actions
 
-**Summary Comment:**
-- Posted at the PR level with a complete list of violations
-- Grouped by file and guideline
-- Includes violation counts and enforcement breakdown (Blocked vs. Monitored)
+**Rescan:** Re-trigger a scan for an existing PR with the current set of active guidelines applied to it. Useful after updating guidelines or resolving earlier violations.
 
-**Status Check:**
-- Appears in GitHub's checks section
-- Can be configured as a required check to block merges (recommended)
-- Links to detailed scan results in Pandorian dashboard
+**Archive:** Archive individual findings that are no longer relevant — archived violations are excluded from future Jira ticket creation and reporting views.
 
-### Repository-Level Configuration
+**Skip CI Check:** Manually skip the CI check for a specific PR. The scan will still run, but results will not block the PR build associated with it.
 
-To adjust which repositories use PR scanning:
-
-1. Navigate to the **Repositories** page in Pandorian
-2. Find your repository
-3. Toggle PR scanning on/off (enabled by default)
-4. Configure whether PR scan failures should block merges (in GitHub's branch protection rules)
+---
 
 ## CI/CD Integration
 
-For teams that want custom enforcement workflows, Pandorian provides an API for direct integration into CI/CD pipelines.
-
-### Integration Method
-
-Pandorian uses **direct API calls** to trigger scans and retrieve results. This gives you full control over:
-- When scans run (on commit, nightly, before deploy, etc.)
-- How failures are handled (block pipeline, send notifications, generate reports)
-- Which guidelines to enforce in different environments
-
-## Guidelines as Code
-### Learn how to sync engineering standards directly from your repository
----
-
-While you can create guidelines via the Pandorian Dashboard, many high-velocity teams prefer to manage their standards directly within their code repositories. This "Guidelines as Code" approach allows you to treat your engineering requirements as "breathing documentation" that evolves alongside your features.
-
-If your team already uses tools like Claude Skills or internal markdown files to guide AI coding assistants, you can sync those same files to Pandorian. This ensures that the rules your AI uses to write code are the exact same rules Pandorian uses to validate code at the Pull Request level / Full Codebase scans.
-
-## How it Works
-
-1. **Source Selection**: In the 'Integrations' tab you designate a specific repository and a "base directory" (e.g., `/docs/guidelines`) where your standards live.
-2. **Automated Sync**: Pandorian monitors this directory for `.md` files.
-3. **Enforcement**: Any change to these files triggers an update in Pandorian upon every merge to the main branch. These updated guidelines are then immediately enforced across all your associated repositories during scans.
-
-## File Structure & Metadata
-
-To be recognized by Pandorian, each Markdown file must contain a YAML frontmatter block. This block includes a `pandorian-metadata` section that maps the file to the Pandorian engine.
-
-### Required Metadata Attributes
-
-| Attribute   | Type    | Description                                                                 |
-|-------------|---------|-----------------------------------------------------------------------------|
-| `id`        | string  | A unique identifier for the guideline (e.g., `scala-expert`).               |
-| `language`  | string  | The target language (e.g., `scala`, `python`, `etc`).                       |
-| `title`     | string  | The clear, actionable name of the rule.                                     |
-| `block   `  | bolean  | Set to true to block the build/PR if this guideline is violated. If false or omitted, defaults to monitor mode.|
-| `category`  | string  | The area of focus (e.g., `security`, `performance`, `architecture`).        |
-| `is_active` | boolean | Toggle whether this guideline is currently being enforced.                  |
-| `tags`      | list    | A list of strings for easier filtering and organization.                    |
-
-### Supported Categories
-
-The `category` attribute must match one of the following supported values:
-
- * Architecture
- * Code Quality & Maintainability
- * Reliability & Resilience
- * Performance & Scalability
- * Security
- * Data & Storage
- * Infrastructure & Environments
- * Observability
-
-### Supported Languages
-
-The `language` attribute must match one of the following supported values:
-
-* c
-* cobol
-* cpp
-* csharp
-* dockerfile
-* elixir
-* go
-* haskell
-* java
-* javascript
-* kotlin
-* lua
-* perl
-* php
-* python
-* ruby
-* rust
-* scala
-* swift
-* terraform
-* typescript
-
-## Implementation Example
-
-Create a file named `scala-expert.md` in your designated guidelines directory:
-```markdown
----
-pandorian-metadata:
-  id: scala-expert
-  language: scala
-  title: Scala Functional Programming Expert
-  block: true
-  category: Architecture
-  is_active: true
-  tags: [scala, functional-programming, cats, fs2]
----
-
-# Scala Functional Programming Standards
-
-You are an elite Scala developer. When writing or reviewing code, ensure:
-- **Immutability First**: Always use `val` over `var` and prefer immutable collections.
-- **Referential Transparency**: Effects must be properly tracked in the type system using `IO`.
-- **Resource Management**: Use `Resource` for anything requiring cleanup (e.g., database connections).
-
-### Prohibited Patterns
-- Never use `null`. Use `Option` instead.
-- Avoid `Thread.sleep`; use `IO.sleep` for non-blocking delays.
-```
-
-## Configuration Steps
-
-1. Navigate to **Integrations > Connections > Github** in the Pandorian Platform
-2. Select the repository containing your `.md` files
-3. Provide the top-level directory path (e.g., `/docs/guidelines`)
-4. Save to trigger an initial scan and import your guidelines
-
-Any subsequent commits to these files will trigger an update in Pandorian, ensuring your PR enforcement is always in sync with your latest standards.
+For teams that want custom enforcement workflows, Pandorian provides an API for direct integration into CI/CD pipelines, giving you full control over when scans run and how failures are handled.
 
 ### GitHub Actions Integration
 
-Here's an example workflow that runs Pandorian scans on every push and blocks the pipeline if violations are found:
+    name: Pandorian Code Enforcement
 
-```yaml
-name: Pandorian Code Enforcement
+    on:
+      push:
+        branches: [ main, develop ]
+      pull_request:
+        branches: [ main ]
 
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
+    jobs:
+      pandorian-scan:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v3
 
-jobs:
-  pandorian-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+          - name: Trigger Pandorian Scan
+            env:
+              PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
+              PANDORIAN_ORG_ID: ${{ secrets.PANDORIAN_ORG_ID }}
+            run: |
+              SCAN_ID=$(curl -X POST https://api.pandorian.ai/v1/scans \
+                -H "Authorization: Bearer $PANDORIAN_API_KEY" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "organization_id": "'$PANDORIAN_ORG_ID'",
+                  "repository": "'$GITHUB_REPOSITORY'",
+                  "commit": "'$GITHUB_SHA'",
+                  "scan_type": "commit"
+                }' | jq -r '.scan_id')
+              echo "SCAN_ID=$SCAN_ID" >> $GITHUB_ENV
 
-      - name: Trigger Pandorian Scan
-        env:
-          PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
-          PANDORIAN_ORG_ID: ${{ secrets.PANDORIAN_ORG_ID }}
-        run: |
-          SCAN_ID=$(curl -X POST https://api.pandorian.ai/v1/scans \
-            -H "Authorization: Bearer $PANDORIAN_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "organization_id": "'$PANDORIAN_ORG_ID'",
-              "repository": "'$GITHUB_REPOSITORY'",
-              "commit": "'$GITHUB_SHA'",
-              "scan_type": "commit"
-            }' | jq -r '.scan_id')
-          
-          echo "SCAN_ID=$SCAN_ID" >> $GITHUB_ENV
+          - name: Wait for Scan Completion
+            env:
+              PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
+            run: |
+              while true; do
+                STATUS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID \
+                  -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq -r '.status')
+                if [ "$STATUS" = "completed" ]; then
+                  break
+                elif [ "$STATUS" = "failed" ]; then
+                  echo "Scan failed"
+                  exit 1
+                fi
+                sleep 10
+              done
 
-      - name: Wait for Scan Completion
-        env:
-          PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
-        run: |
-          while true; do
-            STATUS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID \
-              -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq -r '.status')
-            
-            if [ "$STATUS" = "completed" ]; then
-              break
-            elif [ "$STATUS" = "failed" ]; then
-              echo "Scan failed"
-              exit 1
-            fi
-            
-            sleep 10
-          done
+          - name: Check for Violations
+            env:
+              PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
+            run: |
+              VIOLATIONS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID/violations \
+                -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq '.total_violations')
+              if [ $VIOLATIONS -gt 0 ]; then
+                echo "Found $VIOLATIONS guideline violations"
+                echo "View details: https://app.pandorian.ai/scans/$SCAN_ID"
+                exit 1
+              else
+                echo "No violations found"
+              fi
 
-      - name: Check for Violations
-        env:
-          PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
-        run: |
-          VIOLATIONS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID/violations \
-            -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq '.total_violations')
-          
-          if [ $VIOLATIONS -gt 0 ]; then
-            echo "Found $VIOLATIONS guideline violations"
-            echo "View details: https://app.pandorian.ai/scans/$SCAN_ID"
-            exit 1
-          else
-            echo "No violations found"
-          fi
-```
-
-**Configuration:**
-1. Generate an API key from Pandorian dashboard (Settings → API Keys)
-2. Add secrets to your GitHub repository:
-   - `PANDORIAN_API_KEY`
-   - `PANDORIAN_ORG_ID`
+**Setup:**
+1. Generate an API key from **Settings → API Keys**
+2. Add `PANDORIAN_API_KEY` and `PANDORIAN_ORG_ID` as repository secrets
 3. Commit the workflow file to `.github/workflows/pandorian.yml`
 
-### CircleCI Integration
+### Blocking vs. Monitoring Mode
 
-```yaml
-version: 2.1
+**Blocking Mode** (recommended for production): Pipeline fails if violations are found, preventing non-compliant code from being deployed. Set exit code 1 when violations > 0.
 
-jobs:
-  pandorian-scan:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      
-      - run:
-          name: Trigger Pandorian Scan
-          command: |
-            SCAN_ID=$(curl -X POST https://api.pandorian.ai/v1/scans \
-              -H "Authorization: Bearer $PANDORIAN_API_KEY" \
-              -H "Content-Type: application/json" \
-              -d '{
-                "organization_id": "'$PANDORIAN_ORG_ID'",
-                "repository": "'$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME'",
-                "commit": "'$CIRCLE_SHA1'",
-                "scan_type": "commit"
-              }' | jq -r '.scan_id')
-            
-            echo "export SCAN_ID=$SCAN_ID" >> $BASH_ENV
-      
-      - run:
-          name: Wait for Scan and Check Results
-          command: |
-            # Wait for completion (similar logic to GitHub Actions)
-            # Check violations and exit with code 1 if found
-
-workflows:
-  main:
-    jobs:
-      - pandorian-scan
-```
-
-### Blocking vs Reporting Mode
-
-**Blocking Mode** (recommended for production):
-- Pipeline fails if violations are found
-- Prevents non-compliant code from being deployed
-- Set exit code 1 when violations > 0
-
-**Reporting Mode** (useful for gradual rollout):
-- Pipeline continues regardless of violations
-- Scan results logged for visibility
-- Set exit code 0 always, just log violations
-
-Choose your mode by adjusting the final step's exit code behavior.
+**Monitoring Mode** (useful for gradual rollout): Pipeline continues regardless of violations. Scan results are logged for visibility. Set exit code 0 and log violations without blocking.
 
 ---
 
-## Policy as Code 
- 
-Policy as Code lets you configure repository-level enforcement policy directly in Git, so Pandorian knows which guidelines to run and when to block pull requests - without requiring you to set these rules outside your codebase.
+## Guidelines as Code
 
-The policy is defined inside the repo (using the `.Pandorian/.policy` file), and we apply it on every full / PR scan.
+High-velocity teams can manage guidelines directly within their code repositories, treating engineering standards as living documentation that evolves alongside the codebase.
 
-### Example Policy
+If your team already uses internal markdown files or AI coding assistant skills, you can sync those same files to Pandorian — ensuring the rules your AI uses to write code are the exact same rules Pandorian uses to validate it.
 
-```yaml
-repository_guidelines_tags:
-  - guideline_tag: v2
-```
+### How It Works
 
-### What this configuration means
+1. Designate a repository and base directory (e.g., `/docs/guidelines`) in the **Integrations** tab
+2. Pandorian monitors that directory for `.md` files
+3. Any merge to the main branch triggers an update — guidelines are immediately enforced across all associated repositories
 
-* **Scan scope:** Scan this repository only for guidelines tagged with `v2`.
-* **Enforcement:** Whether a violation blocks the PR or just monitors it is determined by the block field defined inside each individual guideline's metadata.
+### File Structure & Metadata
+
+Each Markdown file must contain a YAML frontmatter block with a `pandorian-metadata` section:
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string | Unique identifier (e.g., `scala-expert`) |
+| `language` | string | Target language (e.g., `scala`, `python`) |
+| `title` | string | Clear, actionable rule name |
+| `block` | boolean | `true` to block on violation; `false` defaults to monitor |
+| `category` | string | Area of focus (e.g., `security`, `performance`) |
+| `is_active` | boolean | Whether this guideline is currently enforced |
+| `tags` | list | Strings for filtering and organization |
+
+### Supported Categories
+
+Architecture, Code Quality & Maintainability, Reliability & Resilience, Performance & Scalability, Security, Data & Storage, Infrastructure & Environments, Observability
+
+### Supported Languages
+
+c, cobol, cpp, csharp, dockerfile, elixir, go, haskell, java, javascript, kotlin, lua, perl, php, python, ruby, rust, scala, swift, terraform, typescript
+
+### Implementation Example
+
+Create a file named `scala-expert.md` in your guidelines directory:
+
+    ---
+    pandorian-metadata:
+      id: scala-expert
+      language: scala
+      title: Scala Functional Programming Expert
+      block: true
+      category: Architecture
+      is_active: true
+      tags: [scala, functional-programming, cats, fs2]
+    ---
+
+    # Scala Functional Programming Standards
+
+    You are an elite Scala developer. When writing or reviewing code, ensure:
+    - **Immutability First**: Always use `val` over `var` and prefer immutable collections.
+    - **Referential Transparency**: Effects must be properly tracked in the type system using `IO`.
+    - **Resource Management**: Use `Resource` for anything requiring cleanup.
+
+    ### Prohibited Patterns
+    - Never use `null`. Use `Option` instead.
+    - Avoid `Thread.sleep`; use `IO.sleep` for non-blocking delays.
+
+### Configuration Steps
+
+1. Navigate to **Integrations → Connections → Source Control** in the Pandorian platform
+2. Select the repository containing your `.md` files
+3. Provide the top-level directory path (e.g., `/docs/guidelines`)
+4. Save to trigger an initial import
+
+---
+
+## Policy as Code
+
+Policy as Code lets you configure repository-level enforcement policy directly in Git, so Pandorian knows which guidelines to run and when to block pull requests — without managing these rules outside your codebase.
+
+The policy is defined in a `.Pandorian/.policy` file inside the repo and is applied on every full and PR scan.
 
 ### Repository Policy Schema
 
-The following schema defines the policy rules available for a specific repository.
-
 ```yaml
-# RepositoryPolicy Schema
-# Defines policy rules for a specific repository within an organization
+# Guidelines to apply — only guidelines tagged with the specified tag will run
+repository_guidelines_tags:
+  - guideline_tag: string
 
-# Unique identifier for the repository this policy applies to.
-# Links the policy configuration to a specific codebase.
-repository_id: string  # required
-
-# Rules for excluding files or directories from analysis.
-# Useful for ignoring vendor code, generated files, or other paths that shouldn't be scanned.
-exclusions:  # optional
-    # The matching strategy to use:
-    #    - exact:   Matches files where the filename exactly equals the value
-    #    - prefix:  Matches files where the filename starts with the value
-    #    - suffix:  Matches files where the full path ends with the value (e.g., ".gen.go")
-    #    - dir:     Matches if any directory component in the path equals the value (e.g., "vendor", "node_modules")
-    #    - pattern: Uses glob pattern matching against the filename (e.g., "*.test.js")
-  - type: string
-    # The value to match against, interpreted based on the type above.
+# Exclusions — skip files or directories from analysis using glob patterns
+# Useful for vendor code, generated files, or any paths that shouldn't be scanned
+exclusions:
+  - type: dir | exact | prefix | suffix | pattern
     value: string
-    # Whether the match should be case-sensitive.
-    # When false, both path and value are lowercased before comparison.
     case_sensitive: bool
 
-# Rules for associating guidelines with this repository based on tags.
-# Allows selective application of organizational guidelines to specific repos.
-repository_guidelines_tags:  # optional
-  # The tag identifier that links to a set of guidelines.
-  # Guidelines with matching tags will be applied during analysis.
+# Inclusions — apply a specific guideline only to a specific path inside the repository
+# Uses glob patterns to scope guideline enforcement to relevant directories or file types
+inclusions:
   - guideline_tag: string
+    path_pattern: string
 ```
 
 ### Comprehensive Configuration Example
 
-This example demonstrates a full `.Pandorian/.policy` file configuration including guideline tagging and exclusion rules.
+    # Guidelines Configuration
+    repository_guidelines_tags:
+      - guideline_tag: v2
 
-```yaml
-# Repository Policy Configuration Example
-# ========================================
+    # Exclusion Rules
+    exclusions:
+      # Exclude vendor directories
+      - type: dir
+        value: vendor
+        case_sensitive: true
 
-# Guidelines Configuration
-# ------------------------
-# This repository will be analyzed using guidelines tagged with "v2".
-# Only guidelines that have the "v2" tag will be applied during code analysis.
-repository_guidelines_tags:
-  - guideline_tag: v2
+      # Exclude generated protobuf files
+      - type: suffix
+        value: .pb.go
+        case_sensitive: true
 
+      # Exclude test files
+      - type: pattern
+        value: "*_test.go"
+        case_sensitive: true
 
-# Exclusion Rules
-# ---------------
-# These rules define which files/directories should be skipped during analysis.
-# Useful for ignoring third-party code, generated files, or test fixtures.
-exclusions:
-  # Exclude all vendor directories (common in Go projects)
-  # Matches any path containing a "vendor" directory component
-  # e.g., "src/vendor/pkg/file.go", "vendor/module/main.go"
-  - type: dir
-    value: vendor
-    case_sensitive: true
+      # Exclude node_modules
+      - type: dir
+        value: node_modules
+        case_sensitive: true
 
-  # Exclude generated protobuf files
-  # Matches any file ending with ".pb.go"
-  # e.g., "api/service.pb.go", "proto/messages.pb.go"
-  - type: suffix
-    value: .pb.go
-    case_sensitive: true
+    # Inclusion Rules
+    inclusions:
+      # Apply security guidelines only to the auth service path
+      - guideline_tag: security
+        path_pattern: "src/auth/**"
 
-  # Exclude all test files using glob pattern
-  # Matches filenames like "user_test.go", "handler_test.go"
-  - type: pattern
-    value: "*_test.go"
-    case_sensitive: true
+      # Apply data guidelines only to migration files
+      - guideline_tag: data-storage
+        path_pattern: "db/migrations/**"
 
-  # Exclude node_modules directory (for JS/TS projects)
-  # Matches any path with "node_modules" as a directory component
-  - type: dir
-    value: node_modules
-    case_sensitive: true
+---
 
-  # Exclude a specific generated file by exact name
-  # Only matches files named exactly "generated_mocks.go"
-  - type: exact
-    value: generated_mocks.go
-    case_sensitive: true
-
-  # Exclude all files starting with a dot (hidden files)
-  # Matches ".gitignore", ".eslintrc", etc.
-  - type: prefix
-    value: "."
-    case_sensitive: false
-```
 ## Dynamic Context Providers
 
-Dynamic Context Providers allow you to connect external data sources directly to your guidelines, ensuring they evaluate your code against the latest, real-time context. Instead of hardcoding lists of approved configurations, libraries, or internal API routes into a static description, you can dynamically fetch them from your own endpoints. 
+Dynamic Context Providers connect external data sources directly to your guidelines, ensuring they evaluate code against real-time context — approved libraries, internal API routes, active feature flags — rather than static hardcoded lists.
 
-By linking a guideline to a Dynamic Context Provider, you guarantee that your code is always validated against your single source of truth, even as your internal configurations evolve.
+### Configuring a Provider
 
-### Configuring a Dynamic Context Provider
+When creating or editing a guideline, add a provider with:
 
-You can set up a Dynamic Context Provider directly in the Pandorian UI. When creating or editing a guideline, simply add a provider and define how Pandorian should fetch and filter your external data:
+- **Title:** Descriptive name (e.g., "Approved Config Flags")
+- **Command:** The exact command Pandorian executes to fetch data (e.g., a `curl` to your internal API)
+- **Grep:** Optional regex to filter the command output to only the relevant data
+- **Timeout:** Maximum seconds to wait for the external source before timing out
 
-* **Title:** A descriptive name for the provider (e.g., "Approved Config Flags").
-* **Command:** The exact command Pandorian will execute to fetch the data, such as a `curl` request to your internal API or configuration server.
-* **Grep:** An optional regular expression used to filter the command's output. This ensures only the exact data you need is passed to the AI as context.
-* **Timeout:** The maximum time (in seconds) Pandorian should wait for your external source to respond before timing out.
+---
 
 ## Slack Integration
 
-Get notified when scans complete and violations are found.
-
 ### Setting Up Slack Notifications
 
-1. Navigate to **Settings → Integrations** in Pandorian dashboard
+1. Navigate to **Settings → Integrations**
 2. Click **Connect Slack**
 3. Authorize Pandorian to access your Slack workspace
-4. Choose which channel receives notifications
-5. Configure notification preferences to alert you when a scan is completed or failed.
+4. Choose the notification channel
+5. Configure alerts for scan completed or scan failed events
 
-### Notification Types
-
-**Scan Completed / Failed:**
-- Triggered when a scan finishes or fails to complete. Every alert includes a direct link to the detailed scan results in the Pandorian dashboard so you can quickly review the findings.
+Each alert includes a direct link to the scan results in the Pandorian dashboard.
 
 ---
 
 ## Jira Integration
 
-Connect Pandorian to Jira to create issues directly from scan results, turning guideline violations into actionable tickets without leaving the dashboard.
-
+Connect Pandorian to Jira to create issues directly from scan results, turning violations into actionable tickets without leaving the dashboard.
 
 ### Setting Up Jira
 
-**Step 1 — Connect your Jira workspace**
-
 1. Navigate to **Integrations → Jira** in the Pandorian dashboard
-2. Click **Connect** and sign in via Atlassian (email, Google, or other connected account)
-3. Once authorized, the integration status will show **Configured**
-
-**Step 2 — Select your default Jira board**
-
-1. Under **Configuration**, open the **Jira Board** dropdown
-2. Select the board where issues will be created by default (e.g. Platform Engineering, Backend Services)
-3. Click **Save**
-
-This board is used as the default for all ticket creation. You can override it per ticket when creating an issue.
-
+2. Click **Connect** and sign in via Atlassian
+3. Once authorized, the integration status shows **Configured**
+4. Under **Configuration**, select your default Jira board and click **Save**
 
 ### Creating a Jira Issue from a Guideline
 
-**Step 3 — Open a guideline's violations**
-
-From the **Guidelines** page, click the **Violations** badge on any guideline to open its violations tab. The tab shows all current open violations including total count, repos affected, and PRs scanned.
-
-A **Jira Issues Opened** counter is visible at the top right of the violations tab, showing how many tickets have already been created for this guideline.
-
-**Step 4 — Create the issue**
-
-Click **Create Issue** at the top of the violations tab. Pandorian automatically generates a ticket draft containing **all current open violations for that guideline in bulk** — you don't need to create a ticket per violation.
-
-**Step 5 — Review and submit**
+From the **Guidelines** page, click the **Violations** badge on any guideline. Click **Create Issue** — Pandorian generates a ticket draft containing all current open violations for that guideline in bulk.
 
 The **Create Jira Issue** form is pre-populated with:
 
 | Field | Details |
 |---|---|
 | **Summary** | Pre-filled; editable |
-| **Description** | Auto-generated from guideline details, violation count, category, and repository context; editable |
+| **Description** | Auto-generated from guideline details, violation count, category, and repo context; editable |
 | **Issue Type** | Defaults to Task; editable |
 | **Priority** | Optional; editable |
 | **Assignee** | Optional; editable |
 | **Labels** | Optional; comma-separated |
 
-A **Ticket Preview** panel on the right shows the rendered output before submission. Review and edit as needed, then click **Create Jira Issue**.
+A **Ticket Preview** panel shows the rendered output before submission.
 
+> **Tip:** Archive irrelevant violations before creating a ticket — archived violations are excluded from the generated issue.
 
-### Ticket History
+### Ticket History & Lifecycle
 
-A dedicated **Tickets** page in Pandorian shows all issues you've opened in the past, so you can track what has been escalated without leaving the dashboard.
+A **Tickets** page in Pandorian shows all issues opened, so you can track escalations without leaving the dashboard. Pandorian does not automatically close, update, or comment on tickets — lifecycle is managed within Jira.
 
-
-### Ticket Lifecycle
-
-Pandorian does not automatically close, update, or comment on tickets. Once an issue is created, its lifecycle is managed entirely within Jira by your team.
-
-
-### Tips
-
-> **Archive violations before creating a ticket** — Any violations you archive before clicking Create Issue will not be included in the ticket. Use this to exclude noise or already-handled violations before escalating.
-
-
-## Enforcement Layer Positioning
-
-Pandorian is designed as an **enforcement layer that sits above your development tools**—agnostic to how code is written (Cursor, Windsurf, manual reviews, AI review tools) and flexible in how it's integrated.
-
-### Integration Models
-
-**Model 1: Parallel to CI/CD**
-- Pandorian runs alongside your existing CI/CD pipeline
-- Catches issues that traditional linters and tests miss
-- Works as an additional required check before merge
-
-**Model 2: As a CI/CD Check**
-- Pandorian integrated directly into your pipeline (via API)
-- Runs after tests, before deployment
-- Blocks deployment if critical violations found
-
-**Model 3: GitHub App Only**
-- Simplest setup—no CI/CD configuration required
-- Automatic enforcement on all pull requests
-- Developers see violations immediately in their workflow
-
-Most teams use a combination: GitHub App for PR feedback + CI/CD integration for pre-deployment validation.
-
-## VS Code Extension (Coming Soon)
-
-We're building a VS Code extension that will bring Pandorian directly into your editor:
-
-**Planned Features:**
-- Real-time guideline enforcement as you write code
-- Inline suggestions and quick fixes
-- Browse and search your organization's guideline catalog
-- One-click scanning of open files or workspace
-- Integration with AI coding assistants
-
-Stay tuned for the beta release.
+---
 
 ## Best Practices
 
-**Start with PR Scanning:**
-Enable automatic PR scanning first—this gives developers immediate feedback without additional configuration.
+**Start with PR Scanning:** Gives developers immediate feedback without additional configuration.
 
-**Use CI/CD for Critical Paths:**
-Add CI/CD integration for production deployments where you need absolute enforcement.
+**Use CI/CD for Critical Paths:** Add pipeline integration where absolute enforcement is required before deployment.
 
-**Configure Enforcement Modes Appropriately:**
-- **Block** → Fails the pipeline and blocks merges/deployments when violations are detected. Use this for critical paths where absolute enforcement is required.
-- **Monitor** → Reports and tracks violations without blocking the pipeline. Use this for general visibility or during a gradual rollout.
+**Enforcement Modes:**
+- **Block** — Fails the pipeline and blocks merges when violations are detected. Use for critical paths.
+- **Monitor** — Reports violations without blocking. Use for gradual rollouts or lower-priority guidelines.
 
-**Gradual Rollout:**
-When introducing Pandorian to an existing codebase, start in reporting mode, identify violation trends, then enable blocking gradually.
-
-## Troubleshooting
-
-**PR scans not running:**
-- Verify GitHub App is installed for the repository
-- Check that guidelines have PR Scan enforcement enabled
-- Confirm repository has PR scanning active (Repositories page)
-
-**CI/CD pipeline failing:**
-- Verify API key is valid and has correct permissions
-- Check API endpoint URLs are correct
-- Ensure scan completion polling doesn't timeout
-
-**Too many false positives:**
-- Refine guideline descriptions to be more specific
-- Adjust enforcement scope (Full vs PR vs All)
-- Contact support for guideline tuning assistance (Pro and Enterprise tiers only)
-
-## Need Help?
-
-- Guideline management: [Managing Guidelines](https://docs.pandorian.ai/essentials/pandorian-core-concepts#what-is-a-guideline)
-- Contact support: support@pandorian.ai (Pro and Enterprise tiers only)
+**Gradual Rollout:** Start in monitoring mode on an existing codebase, identify violation trends, then enable blocking progressively.
