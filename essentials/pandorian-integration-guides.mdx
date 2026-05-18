@@ -3,7 +3,7 @@ title: 'Integration Guides'
 description: 'Learn how to integrate Pandorian with your development workflow'
 ---
 
-Pandorian integrates into your existing development workflow to enforce guidelines continuously and automatically. This guide covers setting up PR scanning, CI/CD integration, notifications, and more.
+Pandorian integrates into your existing SDLC to enforce guidelines continuously and automatically. This guide covers setting up PR scanning, CI/CD integration, notifications, and more.
 
 ## GitHub App & Pull Request Scanning
 
@@ -19,24 +19,14 @@ Once you install the Pandorian GitHub App (done during initial setup), you contr
 2. Pandorian scans only the modified files against guidelines configured for PR scanning
 3. Violations appear in two places:
    - **Inline comments** on specific lines of code where violations occur
-   - **Summary comment** on the PR with an overview of all violations found
+   - **Summary comment** on the PR with an overview of all violations found (if the client opted it in)
 4. The PR check appears in GitHub's status checks (can be configured as required or optional)
 
-### Configuring Which Guidelines Run on PRs
 
-PR scanning is controlled at the **individual guideline level**, giving you granular control over what gets enforced and when. When creating or editing a guideline:
 
-1. Navigate to the **Guidelines** page
-2. Create or edit a guideline
-3. Look for the **Enforce On** field (or scan level configuration)
-4. Choose the scope:
-   - **Full Scan** - Runs only during manual full repository scans
-   - **PR Scan** - Runs automatically on every pull request
-   - **All** - Runs on both full scans and PR scans (recommended for most guidelines)
 
-**Best Practice:** Set critical guidelines (security, production-readiness, API design standards) to **PR Scan** or **All** to catch issues before they're merged. Use **Full Scan** for broader quality checks that don't need immediate PR enforcement.
 
-### Managing PR Scan Results
+### Managing PR Scan Results //TODO should be generelaized for all SCM
 
 When violations are found on a PR:
 
@@ -56,14 +46,7 @@ Note: This feature can be toggled on or off depending on your team's preference.
 - Can be configured as a required check to block merges (recommended)
 - Links to detailed scan results in Pandorian dashboard
 
-### Repository-Level Configuration
 
-To adjust which repositories use PR scanning:
-
-1. Navigate to the **Repositories** page in Pandorian
-2. Find your repository
-3. Toggle PR scanning on/off (enabled by default)
-4. Configure whether PR scan failures should block merges (in GitHub's branch protection rules)
 
 ## CI/CD Integration
 
@@ -298,14 +281,14 @@ workflows:
       - pandorian-scan
 ```
 
-### Blocking vs Reporting Mode
+### Blocking vs Monitoring Mode
 
 **Blocking Mode** (recommended for production):
 - Pipeline fails if violations are found
 - Prevents non-compliant code from being deployed
 - Set exit code 1 when violations > 0
 
-**Reporting Mode** (useful for gradual rollout):
+**Monitoring Mode** (useful for gradual rollout):
 - Pipeline continues regardless of violations
 - Scan results logged for visibility
 - Set exit code 0 always, just log violations
@@ -530,37 +513,7 @@ Pandorian does not automatically close, update, or comment on tickets. Once an i
 
 Pandorian is designed as an **enforcement layer that sits above your development tools**—agnostic to how code is written (Cursor, Windsurf, manual reviews, AI review tools) and flexible in how it's integrated.
 
-### Integration Models
 
-**Model 1: Parallel to CI/CD**
-- Pandorian runs alongside your existing CI/CD pipeline
-- Catches issues that traditional linters and tests miss
-- Works as an additional required check before merge
-
-**Model 2: As a CI/CD Check**
-- Pandorian integrated directly into your pipeline (via API)
-- Runs after tests, before deployment
-- Blocks deployment if critical violations found
-
-**Model 3: GitHub App Only**
-- Simplest setup—no CI/CD configuration required
-- Automatic enforcement on all pull requests
-- Developers see violations immediately in their workflow
-
-Most teams use a combination: GitHub App for PR feedback + CI/CD integration for pre-deployment validation.
-
-## VS Code Extension (Coming Soon)
-
-We're building a VS Code extension that will bring Pandorian directly into your editor:
-
-**Planned Features:**
-- Real-time guideline enforcement as you write code
-- Inline suggestions and quick fixes
-- Browse and search your organization's guideline catalog
-- One-click scanning of open files or workspace
-- Integration with AI coding assistants
-
-Stay tuned for the beta release.
 
 ## Best Practices
 
@@ -598,3 +551,13 @@ When introducing Pandorian to an existing codebase, start in reporting mode, ide
 
 - Guideline management: [Managing Guidelines](https://docs.pandorian.ai/essentials/pandorian-core-concepts#what-is-a-guideline)
 - Contact support: support@pandorian.ai (Pro and Enterprise tiers only)
+
+
+// TODO add
+exclusion - in repository policy section - every repository now has the ability to exclude files and drirectories using a glob pattern
+inclusion - in repository policy section - every repository now has the ability to apply a specific guideline on a specific path inside the repository using a glob pattern
+
+Rescan - ability to re trigger a scan for a PR with the current set of guidelines in the system aplied to iy
+Archive - Arcive findings that are irrelevant
+Skip CI checks - ability to manually skip a ci check for that PR - the scan results will not block the PR build associated with it
+
