@@ -17,7 +17,7 @@ Once you connect your source control provider (done during initial setup), PR sc
 
 1. Developer opens or updates a pull request
 2. Pandorian scans only the modified files against guidelines configured for PR scanning
-3. Violations appear as inline comments on specific lines and as a summary comment on the PR (if the client opted it in)
+3. Violations appear as inline comments on specific lines and as a summary comment on the PR (if opted in)
 4. The PR check appears in your source control's status checks (configurable as required or optional)
 
 ### Configuring Which Guidelines Run on PRs
@@ -50,66 +50,68 @@ For teams that want custom enforcement workflows, Pandorian provides an API for 
 
 ### GitHub Actions Integration
 
-    name: Pandorian Code Enforcement
+```yaml
+name: Pandorian Code Enforcement
 
-    on:
-      push:
-        branches: [ main, develop ]
-      pull_request:
-        branches: [ main ]
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
 
-    jobs:
-      pandorian-scan:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v3
+jobs:
+  pandorian-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-          - name: Trigger Pandorian Scan
-            env:
-              PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
-              PANDORIAN_ORG_ID: ${{ secrets.PANDORIAN_ORG_ID }}
-            run: |
-              SCAN_ID=$(curl -X POST https://api.pandorian.ai/v1/scans \
-                -H "Authorization: Bearer $PANDORIAN_API_KEY" \
-                -H "Content-Type: application/json" \
-                -d '{
-                  "organization_id": "'$PANDORIAN_ORG_ID'",
-                  "repository": "'$GITHUB_REPOSITORY'",
-                  "commit": "'$GITHUB_SHA'",
-                  "scan_type": "commit"
-                }' | jq -r '.scan_id')
-              echo "SCAN_ID=$SCAN_ID" >> $GITHUB_ENV
+      - name: Trigger Pandorian Scan
+        env:
+          PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
+          PANDORIAN_ORG_ID: ${{ secrets.PANDORIAN_ORG_ID }}
+        run: |
+          SCAN_ID=$(curl -X POST https://api.pandorian.ai/v1/scans \
+            -H "Authorization: Bearer $PANDORIAN_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "organization_id": "'$PANDORIAN_ORG_ID'",
+              "repository": "'$GITHUB_REPOSITORY'",
+              "commit": "'$GITHUB_SHA'",
+              "scan_type": "commit"
+            }' | jq -r '.scan_id')
+          echo "SCAN_ID=$SCAN_ID" >> $GITHUB_ENV
 
-          - name: Wait for Scan Completion
-            env:
-              PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
-            run: |
-              while true; do
-                STATUS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID \
-                  -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq -r '.status')
-                if [ "$STATUS" = "completed" ]; then
-                  break
-                elif [ "$STATUS" = "failed" ]; then
-                  echo "Scan failed"
-                  exit 1
-                fi
-                sleep 10
-              done
+      - name: Wait for Scan Completion
+        env:
+          PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
+        run: |
+          while true; do
+            STATUS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID \
+              -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq -r '.status')
+            if [ "$STATUS" = "completed" ]; then
+              break
+            elif [ "$STATUS" = "failed" ]; then
+              echo "Scan failed"
+              exit 1
+            fi
+            sleep 10
+          done
 
-          - name: Check for Violations
-            env:
-              PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
-            run: |
-              VIOLATIONS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID/violations \
-                -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq '.total_violations')
-              if [ $VIOLATIONS -gt 0 ]; then
-                echo "Found $VIOLATIONS guideline violations"
-                echo "View details: https://app.pandorian.ai/scans/$SCAN_ID"
-                exit 1
-              else
-                echo "No violations found"
-              fi
+      - name: Check for Violations
+        env:
+          PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
+        run: |
+          VIOLATIONS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID/violations \
+            -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq '.total_violations')
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo "Found $VIOLATIONS guideline violations"
+            echo "View details: https://app.pandorian.ai/scans/$SCAN_ID"
+            exit 1
+          else
+            echo "No violations found"
+          fi
+```
 
 **Setup:**
 1. Generate an API key from **Settings → API Keys**
@@ -162,27 +164,29 @@ c, cobol, cpp, csharp, dockerfile, elixir, go, haskell, java, javascript, kotlin
 
 Create a file named `scala-expert.md` in your guidelines directory:
 
-    ---
-    pandorian-metadata:
-      id: scala-expert
-      language: scala
-      title: Scala Functional Programming Expert
-      block: true
-      category: Architecture
-      is_active: true
-      tags: [scala, functional-programming, cats, fs2]
-    ---
+```yaml
+---
+pandorian-metadata:
+  id: scala-expert
+  language: scala
+  title: Scala Functional Programming Expert
+  block: true
+  category: Architecture
+  is_active: true
+  tags: [scala, functional-programming, cats, fs2]
+---
 
-    # Scala Functional Programming Standards
+# Scala Functional Programming Standards
 
-    You are an elite Scala developer. When writing or reviewing code, ensure:
-    - **Immutability First**: Always use `val` over `var` and prefer immutable collections.
-    - **Referential Transparency**: Effects must be properly tracked in the type system using `IO`.
-    - **Resource Management**: Use `Resource` for anything requiring cleanup.
+You are an elite Scala developer. When writing or reviewing code, ensure:
+- **Immutability First**: Always use `val` over `var` and prefer immutable collections.
+- **Referential Transparency**: Effects must be properly tracked in the type system using `IO`.
+- **Resource Management**: Use `Resource` for anything requiring cleanup.
 
-    ### Prohibited Patterns
-    - Never use `null`. Use `Option` instead.
-    - Avoid `Thread.sleep`; use `IO.sleep` for non-blocking delays.
+### Prohibited Patterns
+- Never use `null`. Use `Option` instead.
+- Avoid `Thread.sleep`; use `IO.sleep` for non-blocking delays.
+```
 
 ### Configuration Steps
 
@@ -222,41 +226,43 @@ inclusions:
 
 ### Comprehensive Configuration Example
 
-    # Guidelines Configuration
-    repository_guidelines_tags:
-      - guideline_tag: v2
+```yaml
+# Guidelines Configuration
+repository_guidelines_tags:
+  - guideline_tag: v2
 
-    # Exclusion Rules
-    exclusions:
-      # Exclude vendor directories
-      - type: dir
-        value: vendor
-        case_sensitive: true
+# Exclusion Rules
+exclusions:
+  # Exclude vendor directories
+  - type: dir
+    value: vendor
+    case_sensitive: true
 
-      # Exclude generated protobuf files
-      - type: suffix
-        value: .pb.go
-        case_sensitive: true
+  # Exclude generated protobuf files
+  - type: suffix
+    value: .pb.go
+    case_sensitive: true
 
-      # Exclude test files
-      - type: pattern
-        value: "*_test.go"
-        case_sensitive: true
+  # Exclude test files
+  - type: pattern
+    value: "*_test.go"
+    case_sensitive: true
 
-      # Exclude node_modules
-      - type: dir
-        value: node_modules
-        case_sensitive: true
+  # Exclude node_modules
+  - type: dir
+    value: node_modules
+    case_sensitive: true
 
-    # Inclusion Rules
-    inclusions:
-      # Apply security guidelines only to the auth service path
-      - guideline_tag: security
-        path_pattern: "src/auth/**"
+# Inclusion Rules
+inclusions:
+  # Apply security guidelines only to the auth service path
+  - guideline_tag: security
+    path_pattern: "src/auth/**"
 
-      # Apply data guidelines only to migration files
-      - guideline_tag: data-storage
-        path_pattern: "db/migrations/**"
+  # Apply data guidelines only to migration files
+  - guideline_tag: data-storage
+    path_pattern: "db/migrations/**"
+```
 
 ---
 
@@ -335,4 +341,4 @@ A **Tickets** page in Pandorian shows all issues opened, so you can track escala
 - **Block** — Fails the pipeline and blocks merges when violations are detected. Use for critical paths.
 - **Monitor** — Reports violations without blocking. Use for gradual rollouts or lower-priority guidelines.
 
-**Gradual Rollout:** Start in monitoring mode on an existing codebase, identify violation trends, then enable blocking progressively. 
+**Gradual Rollout:** Start in monitoring mode on an existing codebase, identify violation trends, then enable blocking progressively.
