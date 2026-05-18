@@ -40,11 +40,11 @@ Pandorian offers two scan modes depending on what you need.
 
 ---
 
-## How Enforcement Works
+## How Codebase Governance Enforcement Works
 
 When a guideline is created or updated, Pandorian's AI analyzes its description to understand the pattern or anti-pattern to detect, the context that makes a violation legitimate vs. problematic, and any edge cases implied by the description.
 
-Scans can be triggered on-demand, on pull requests, on a schedule, or via CI/CD pipeline. When a scan runs, Pandorian analyzes your code against all active guidelines, identifies violations with file path and line-level context, and generates remediation guidance for each finding.
+Scans can be triggered on-demand, on pull requests, or via CI/CD pipeline. When a scan runs, Pandorian analyzes your code against all active guidelines, identifies violations with file path and line-level context, and generates remediation guidance for each finding.
 
 Guidelines set to **Block** will fail CI/CD pipelines and prevent merge. Guidelines set to **Monitor** surface violations for visibility without interrupting development.
 
