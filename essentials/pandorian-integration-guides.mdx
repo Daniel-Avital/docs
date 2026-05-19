@@ -213,7 +213,7 @@ repository_guidelines_tags:
 # Exclusions — skip files or directories from analysis using glob patterns
 # Useful for vendor code, generated files, or any paths that shouldn't be scanned
 exclusions:
-  - type: dir | exact | prefix | suffix | pattern
+  - type: glob
     value: string
     case_sensitive: bool
 
@@ -222,7 +222,7 @@ exclusions:
 inclusions:
   - guideline_tag: string
     path_pattern:
-      - type: dir | exact | prefix | suffix | pattern
+      - type: glob
         value: string
         case_sensitive: bool
 ```
@@ -237,23 +237,23 @@ repository_guidelines_tags:
 # Exclusion Rules
 exclusions:
   # Exclude vendor directories
-  - type: dir
-    value: vendor
+  - type: glob
+    value: "vendor/**"
     case_sensitive: true
 
   # Exclude generated protobuf files
-  - type: suffix
-    value: .pb.go
+  - type: glob
+    value: "**/*.pb.go"
     case_sensitive: true
 
   # Exclude test files
-  - type: pattern
-    value: "*_test.go"
+  - type: glob
+    value: "**/*_test.go"
     case_sensitive: true
 
   # Exclude node_modules
-  - type: dir
-    value: node_modules
+  - type: glob
+    value: "node_modules/**"
     case_sensitive: true
 
 # Inclusion Rules
@@ -261,15 +261,15 @@ inclusions:
   # Apply security guidelines only to the auth service path
   - guideline_tag: security
     path_pattern:
-      - type: dir
-        value: auth
+      - type: glob
+        value: "src/auth/**"
         case_sensitive: true
 
   # Apply data guidelines only to migration files
   - guideline_tag: data-storage
     path_pattern:
-      - type: dir
-        value: migrations
+      - type: glob
+        value: "db/migrations/**"
         case_sensitive: true
 ```
 
