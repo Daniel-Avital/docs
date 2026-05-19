@@ -26,8 +26,9 @@ When creating or editing a guideline, set the **Enforce On** field:
 
 - **Full Scan** — Runs only during manual full repository scans
 - **PR Scan** — Runs automatically on every pull request
+- **All** — Runs on both full scans and PR scans (recommended for most guidelines)
 
-**Best Practice:** Set critical guidelines (security, production-readiness, API design) to **PR Scan**. Use **Full Scan** for broader quality checks that don't need immediate PR enforcement.
+**Best Practice:** Set critical guidelines (security, production-readiness, API design) to **PR Scan** or **All**. Use **Full Scan** for broader quality checks that don't need immediate PR enforcement.
 
 ### Managing PR Scan Results
 
@@ -220,7 +221,10 @@ exclusions:
 # Uses glob patterns to scope guideline enforcement to relevant directories or file types
 inclusions:
   - guideline_tag: string
-    path_pattern: string
+    path_pattern:
+      - type: dir | exact | prefix | suffix | pattern
+        value: string
+        case_sensitive: bool
 ```
 
 ### Comprehensive Configuration Example
@@ -256,11 +260,17 @@ exclusions:
 inclusions:
   # Apply security guidelines only to the auth service path
   - guideline_tag: security
-    path_pattern: "src/auth/**"
+    path_pattern:
+      - type: dir
+        value: auth
+        case_sensitive: true
 
   # Apply data guidelines only to migration files
   - guideline_tag: data-storage
-    path_pattern: "db/migrations/**"
+    path_pattern:
+      - type: dir
+        value: migrations
+        case_sensitive: true
 ```
 
 ---
