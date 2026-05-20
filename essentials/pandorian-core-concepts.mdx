@@ -5,42 +5,58 @@ description: 'Understanding how Pandorian works'
 
 ## What is a Guideline?
 
-A guideline is a software development rule or best practice written in plain English that Pandorian enforces across your codebase. Instead of configuring complex static analysis tools, you describe what you want in natural language.
+A guideline is a software development rule or best practice written in natural language that Pandorian enforces across your codebase. Instead of configuring complex static analysis tools, you describe what you want — and Pandorian enforces it.
 
-**Example Guidelines:**
+**Security example:**
 
-*"When initializing lists and dictionaries with known quantities, consider pre-sizing to reduce allocations and improve performance."*
+*"All database operations must use parameterized queries instead of string concatenation to prevent SQL injection attacks. Never concatenate user input directly into SQL strings."*
 
-*"All configuration values including URLs, timeouts, limits, and paths must be externalized to configuration files or environment-specific sources rather than embedded directly in source code."*
+**Architecture example:**
 
-Guidelines capture your team's standards, architectural decisions, security requirements, and performance best practices in a centralized, enforceable format. They work across any programming language and automatically adapt to your codebase's specific context.
+*"Each microservice must maintain its own dedicated data storage and never share databases with other services to ensure data ownership and service independence."*
+
+Guidelines capture your team's standards, architectural decisions, security requirements, and performance best practices in a centralized, enforceable format. They work across your entire tech stack and automatically adapt to your codebase's specific context.
 
 ### Anatomy of a Guideline
 
 Every guideline consists of:
 
-**Title:** A clear, actionable name that describes the rule (e.g., "Pre-size Collections When Possible" or "Hardcoded Configuration Values Must Be Eliminated")
+**Title:** A clear, actionable name that describes the rule (e.g., "Database Queries Must Use Parameterized Statements" or "Microservices Must Own Their Data Storage")
 
-**Description:** Plain English explanation of what should or shouldn't happen in your code — including context, reasoning, and any exceptions.
+**Description:** The rule written in natural language — what should or shouldn't happen in the code, including context, reasoning, and any exceptions. You can enrich the description with:
+- **Good examples** showing compliant patterns
+- **Bad examples** showing what to avoid
+- Specific frameworks, libraries, or internal conventions to reference
 
-**Tags:** Metadata that helps organize and prioritize guidelines:
-- **Category** (Performance, Security, Configuration, Code Quality, etc.)
-- **Enforcement** (Block or Monitor)
-- **Language** (Python, Java, JavaScript, or language-agnostic)
+ **Tags:** Metadata that allows you to assign and scope each guideline.
+
+ **Category:** The area of focus, such as Security, Architecture, Performance, or API Design. See the [full category list](#categories) below.
+
+ **Enforcement Mode:** **Block** to fail CI/CD and prevent merge on violation, or **Monitor** to surface violations without blocking development.
+
+ **Language:** Scopes the guideline to a specific language. Pandorian supports 20+ languages including Python, Java, JavaScript, TypeScript, Go, Scala, and more. [See all supported languages.](https://docs.pandorian.ai/essentials/pandorian-integration-guides#supported-languages)
+
+**Dynamic Context Providers (optional):** Connect external data sources to your guideline so enforcement stays in sync with your real-world configuration. Instead of hardcoding lists into the description, Pandorian fetches live context at scan time — for example, an approved library allowlist from your internal registry, or a list of sanctioned API routes from your API gateway. See [Dynamic Context Providers](https://docs.pandorian.ai/essentials/pandorian-integration-guides#dynamic-context-providers).
+
+### Categories
+
+Pandorian's catalog is organized across 17 categories:
+
+Security, Architecture, Performance, Scalability, API Design, Observability, Configuration, Code Quality, Data Management, Fault Tolerance, System Reliability, Error Handling, Deployment Safety, Concurrency, Testing, Resource Management, Best Practices
 
 ---
 
-## PR Scan vs. Full Codebase Scan
+## Scans
 
 Pandorian offers two scan modes depending on what you need.
 
-**PR Scan:** Analyzes only the changes introduced in a pull request. Runs automatically via GitHub App integration, giving developers fast feedback before merge without re-analyzing the entire codebase.
+**PR Scan:** Analyzes only the changes introduced in a pull request. Runs via your source control integration (GitHub, GitLab, or Azure DevOps), giving developers fast feedback before merge. Violations are flagged in the Pandorian UI for engineering managers to review and analyze, posted as inline comments on the PR, surfaced as a status check in CI, and can be escalated directly to Jira.
 
-**Full Codebase Scan:** Analyzes an entire repository against all active guidelines. Use this for audits, onboarding new repos, or getting a complete picture of where your codebase stands against your standards.
+**Full Repo Scan:** Analyzes an entire repository against all active guidelines. Use this for audits, onboarding new repositories, or getting a complete picture of where your codebase stands against your standards.
 
 ---
 
-## How Codebase Governance Enforcement Works
+## How Enforcement Works
 
 When a guideline is created or updated, Pandorian's AI analyzes its description to understand the pattern or anti-pattern to detect, the context that makes a violation legitimate vs. problematic, and any edge cases implied by the description.
 
@@ -52,4 +68,4 @@ Guidelines set to **Block** will fail CI/CD pipelines and prevent merge. Guideli
 
 ## Scan Results & Violations
 
-After a scan completes, results are available in the Scans page. Each violation includes the file path and line number, an explanation of why the code violates the guideline, and the option to generate a context-aware fix instruction — a markdown file you can review yourself or feed directly to an AI coding tool like Copilot, Cursor, or Claude.
+After a scan completes, results are available in the Pandorian Scans page. Each violation includes the file path and line number, an explanation of why the code violates the guideline, and the option to generate a context-aware fix instruction — a markdown file you can review yourself or feed directly to an AI coding tool like Copilot, Cursor, or Claude.
