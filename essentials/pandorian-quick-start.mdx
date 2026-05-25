@@ -33,10 +33,10 @@ You have two options: create a custom guideline from scratch, or import from an 
 4. Fill out the guideline form:
    - **Guideline ID:** A unique identifier (e.g., `SEC-001`, `PERF-002`)
    - **Category:** Select a category (Security, Performance, Code Quality, etc.)
-   - **Language:** Choose the programming language/s this applies to
+   - **Language:** Choose the programming language(s) this applies to
    - **Title:** Clear, actionable name for your rule
-   - **Description:** Write your guideline in plain English. Be specific about what should or shouldn't happen in the code.
-   - **Enforcement:** Set to **Block** (fails CI/CD on violation) or **Monitor** (surfaces violations without blocking)
+   - **Description:** Write your guideline in natural language. Be specific about what should or shouldn't happen in the code.
+   - **Enforcement Mode:** Set to **Block** (fails CI/CD on violation) or **Monitor** (surfaces violations without blocking)
    - **Enforce On:** Which repositories this guideline applies to (default: ALL)
 
     **Example guideline:**
@@ -55,48 +55,31 @@ Pandorian supports multiple import sources so you can turn existing documentatio
 
 - **Confluence** — import directly from your team's Confluence pages
 - **Markdown files** — upload any internal documentation or standards docs
-- **Pandorian Catalog** — 2,000+ pre-built best practices across Python, JavaScript, TypeScript, Java, Go, Scala and more
+- **Pandorian Catalog** — 2,000+ pre-built best practices across Python, JavaScript, TypeScript, Java, Go, Scala, and more
 - **Policy as Code** — import structured policy definitions directly
 
 Browse or search by language, category, or priority and add guidelines to your organization in one click.
 
-Congrats, your first guidelines are set up. Every PR on your selected repositories will now be scanned against your guidelines.
+Your first guidelines are set up. Every PR on your selected repositories will now be scanned against them.
 
-For advanced usage - see our policy managment where you can define where and when specific guidelines are scanned. 
-
-https://github.com/Daniel-Avital/docs/blob/amitk-pandorian-update1-finish-md-file/essentials/pandorian-integration-guides.mdx#policy-as-code
+For advanced usage, see [Policy as Code](https://docs.pandorian.ai/essentials/pandorian-integration-guides#policy-as-code) to define where and when specific guidelines are enforced.
 
 ## Step 3: Review Scan Findings
 
-Once PRs start running, they will be scanned against your guidelines.
-There are two ways to view your findings, per scan or per guideline:
+Once PRs start running, they will be scanned against your guidelines. There are two ways to view findings — per scan or per guideline.
 
-- Per Scan: navigate to the **Scans** page. You'll see a list of all completed scans, sorted by most recent. Scans that contain violations will be flagged with a red 'violations' icon. 
-Click on the scan containing violations, and you will see that non compliant files that contain the violations. Click on the files to expand and view the description of the violation. Click 'view code' button, to view the actual violation within the code snippet.
+**Per Scan:** Navigate to the **Scans** page to see a list of all completed scans, sorted by most recent. Scans containing violations are flagged with a red violations icon. Click a scan to see the non-compliant files, then click a file to expand and view the violation description. Click **View Code** to see the violation within the code snippet.
 
-- Per Guideline: navigate to the **Guidelines** page. Each guideline, that contains violations from scans will have violations badge with the number of open violations. 
-Click the badge, to view the violations. Each violation can be clicked on to view within the code snippet.
-
+**Per Guideline:** Navigate to the **Guidelines** page. Any guideline with open violations displays a badge with the violation count. Click the badge to view all violations, and click any violation to view it within the code snippet.
 
 ## Step 4: Take Action on Violations
 
-### View in Context
-Click **View Code** to see the exact violation location with line numbers highlighted and guideline details in the side panel.
+**View in Context:** Click **View Code** to see the exact violation location with line numbers highlighted and guideline details in the side panel.
 
-### Generate Fix Instructions
-Click **Generate Fix** to create a markdown document with full context, step-by-step remediation instructions, and code suggestions. Feed this directly to AI coding tools like GitHub Copilot, Cursor, or Claude to implement fixes.
+**Generate Fix Instructions:** Click **Generate Fix** to create a markdown document with full context, step-by-step remediation instructions, and code suggestions. Feed this directly to AI coding tools like GitHub Copilot, Cursor, or Claude to implement fixes.
 
-### Integrations
-Connect Pandorian to your existing workflow — including **Jira** — to route violations directly into your issue tracker. See the [Integration Guides](https://docs.pandorian.ai/essentials/pandorian-integration-guides) for setup instructions.
+**Create a Jira Ticket:** From the violations view, click **Create Issue** to open a pre-populated Jira ticket containing all open violations for that guideline. See [Jira Integration](https://docs.pandorian.ai/essentials/pandorian-integration-guides#jira-integration) for setup instructions.
 
+**Archive:** Archive findings that are no longer relevant to exclude them from reporting and future Jira tickets.
 
-
-
-## Step 3: Run Your First Scan 
-
-1. Navigate to the **Repositories** page
-2. Find the repository you want to scan
-3. Click the **▶ Play** button next to the repository name
-4. Select **Full Scan** to analyze the entire repository
-
-Pandorian analyzes your codebase against all active guidelines, understanding context and structure rather than just pattern matching.
+**Rescan:** After updating a guideline or resolving violations, click **Rescan** to re-trigger the scan on an existing PR with the current set of active guidelines.
