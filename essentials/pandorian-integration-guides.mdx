@@ -11,28 +11,15 @@ The fastest way to enforce guidelines is through automatic PR scanning via your 
 
 ### How PR Scanning Works
 
-Once you connect your source control provider (done during initial setup), PR scanning is controlled at the **guideline level** — you explicitly choose which guidelines run on pull requests.
+Once you connect your source control manager during initial setup, PR scanning is automatically triggered on every new PR or Push to an existing PR.
 
 **What happens during a PR scan:**
 
-1. Developer opens or updates a pull request
-2. Pandorian scans only the modified files against guidelines configured for PR scanning
+1. Developer opens or updates a pull request.
+2. Pandorian scans only the modified files against guidelines.
 3. Violations appear as inline comments on specific lines and as a summary comment on the PR (if opted in)
 4. The PR check appears in your source control's status checks (configurable as required or optional)
 
-### Configuring Which Guidelines Run on PRs
-
-When creating or editing a guideline, set the **Enforce On** field:
-
-- **Full Scan** — Runs only during manual full repository scans
-- **PR Scan** — Runs automatically on every pull request
-- **All** — Runs on both full scans and PR scans (recommended for most guidelines)
-
-**Best Practice:** Set critical guidelines (security, production-readiness, API design) to **PR Scan** or **All**. Use **Full Scan** for broader quality checks that don't need immediate PR enforcement.
-
-### Managing PR Scan Results
-
-When violations are found on a PR, results appear as inline comments on specific lines, a summary comment with an overview of all violations found, and a status check that can be configured as a required check to block merges.
 
 ### PR Actions
 
@@ -43,80 +30,6 @@ When violations are found on a PR, results appear as inline comments on specific
 **Skip CI Check:** Manually skip the CI check for a specific PR. The scan will still run, but results will not block the PR build associated with it.
 
 ---
-
-## CI/CD Integration
-
-For teams that want custom enforcement workflows, Pandorian provides an API for direct integration into CI/CD pipelines, giving you full control over when scans run and how failures are handled.
-
-### GitHub Actions Integration
-
-```yaml
-name: Pandorian Code Enforcement
-
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  pandorian-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Trigger Pandorian Scan
-        env:
-          PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
-          PANDORIAN_ORG_ID: ${{ secrets.PANDORIAN_ORG_ID }}
-        run: |
-          SCAN_ID=$(curl -X POST https://api.pandorian.ai/v1/scans \
-            -H "Authorization: Bearer $PANDORIAN_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "organization_id": "'$PANDORIAN_ORG_ID'",
-              "repository": "'$GITHUB_REPOSITORY'",
-              "commit": "'$GITHUB_SHA'",
-              "scan_type": "commit"
-            }' | jq -r '.scan_id')
-          echo "SCAN_ID=$SCAN_ID" >> $GITHUB_ENV
-
-      - name: Wait for Scan Completion
-        env:
-          PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
-        run: |
-          while true; do
-            STATUS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID \
-              -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq -r '.status')
-            if [ "$STATUS" = "completed" ]; then
-              break
-            elif [ "$STATUS" = "failed" ]; then
-              echo "Scan failed"
-              exit 1
-            fi
-            sleep 10
-          done
-
-      - name: Check for Violations
-        env:
-          PANDORIAN_API_KEY: ${{ secrets.PANDORIAN_API_KEY }}
-        run: |
-          VIOLATIONS=$(curl -s https://api.pandorian.ai/v1/scans/$SCAN_ID/violations \
-            -H "Authorization: Bearer $PANDORIAN_API_KEY" | jq '.total_violations')
-          if [ $VIOLATIONS -gt 0 ]; then
-            echo "Found $VIOLATIONS guideline violations"
-            echo "View details: https://app.pandorian.ai/scans/$SCAN_ID"
-            exit 1
-          else
-            echo "No violations found"
-          fi
-```
-
-**Setup:**
-1. Generate an API key from **Settings → API Keys**
-2. Add `PANDORIAN_API_KEY` and `PANDORIAN_ORG_ID` as repository secrets
-3. Commit the workflow file to `.github/workflows/pandorian.yml`
 
 ### Blocking vs. Monitoring Mode
 
@@ -199,7 +112,7 @@ You are an elite Scala developer. When writing or reviewing code, ensure:
 
 ## Policy as Code
 
-Policy as Code lets you configure repository-level enforcement policy directly in Git, so Pandorian knows which guidelines to run and when to block pull requests — without managing these rules outside your codebase.
+Policy as Code lets you configure repository-level settings as code, so Pandorian knows which guidelines to run and when to block pull requests — without managing these rules outside your codebase.
 
 The policy is defined in a `.Pandorian/.policy` file inside the repo and is applied on every full and PR scan.
 
@@ -340,14 +253,4 @@ A **Tickets** page in Pandorian shows all issues opened, so you can track escala
 
 ---
 
-## Best Practices
 
-**Start with PR Scanning:** Gives developers immediate feedback without additional configuration.
-
-**Use CI/CD for Critical Paths:** Add pipeline integration where absolute enforcement is required before deployment.
-
-**Enforcement Modes:**
-- **Block** — Fails the pipeline and blocks merges when violations are detected. Use for critical paths.
-- **Monitor** — Reports violations without blocking. Use for gradual rollouts or lower-priority guidelines.
-
-**Gradual Rollout:** Start in monitoring mode on an existing codebase, identify violation trends, then enable blocking progressively.
