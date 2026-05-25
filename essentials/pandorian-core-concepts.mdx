@@ -5,8 +5,9 @@ description: 'Understanding how Pandorian works'
 
 ## What is a Guideline?
 
-A guideline is a software development rule or best practice written in natural language that explicitliy declares an allowed or disallowed pattern. For example, "Always require ..." or "Never allow..".
-Guidelines are defined in Pandorian, and then subsequently enforced across your codebase.
+A guideline is a software development rule or best practice written in natural language that explicitly declares an allowed or disallowed pattern — for example, "Always require..." or "Never allow...".
+
+Guidelines are defined in Pandorian and subsequently enforced across your codebase.
 
 ### Anatomy of a Guideline
 
@@ -19,33 +20,28 @@ Every guideline consists of:
 - **Bad examples** showing what to avoid
 - Specific frameworks, libraries, or internal conventions to reference
 
- **Tags:** Metadata that allows you to assign and scope each guideline.
+**Tags:** Metadata that allows you to assign and scope each guideline.
 
- **Category:** The area of focus, such as Security, Architecture, Performance, or API Design. See the [full category list](#categories) below.
+**Category:** The area of focus, such as Security, Architecture, Performance, or API Design. See the [full category list](#categories) below.
 
- **Enforcement Mode:** **Block** to block the CI/CD and prevent merge on violation, or **Monitor** to surface violations without blocking development.
+**Enforcement Mode:** **Block** to block CI/CD and prevent merge on violation, or **Monitor** to surface violations without blocking development.
 
- **Languages:** Scopes the guideline to specific languages. Pandorian supports 20+ languages including Python, Java, JavaScript, TypeScript, Go, Scala, and more. [See all supported languages.](https://docs.pandorian.ai/essentials/pandorian-integration-guides#supported-languages)
+**Languages:** Scopes the guideline to specific languages. Pandorian supports 20+ languages including Python, Java, JavaScript, TypeScript, Go, Scala, and more. [See all supported languages.](https://docs.pandorian.ai/essentials/pandorian-integration-guides#supported-languages)
 
 **Dynamic Context Providers (optional):** Connect external data sources to your guideline so enforcement stays in sync with your real-world configuration. Instead of hardcoding lists into the description, Pandorian fetches live context at scan time — for example, an approved library allowlist from your internal registry, or a list of sanctioned API routes from your API gateway. See [Dynamic Context Providers](https://docs.pandorian.ai/essentials/pandorian-integration-guides#dynamic-context-providers).
 
+### Guideline Examples
 
----
-Guidelines Examples - Change examples. 
-**Security example:**
-
+**Security:**
 *"All database operations must use parameterized queries instead of string concatenation to prevent SQL injection attacks. Never concatenate user input directly into SQL strings."*
 
-Performance Example for C#-
-Resource-Intensive Operations Must Support Cancellation
-Long-running operations must implement graceful cancellation using CancellationToken with periodic checks using ThrowIfCancellationRequested() within bounded time periods.
+**Performance (C#):**
+*"Long-running operations must implement graceful cancellation using CancellationToken with periodic checks using ThrowIfCancellationRequested() within bounded time periods."*
 
-Reliability & Resilience Example 
-Partial Network Failures Must Not Cause Complete Service Degradation
-Systems must maintain partial functionality during network partitions using circuit breakers, fallback mechanisms, and feature toggles that preserve core services.
+**Reliability & Resilience:**
+*"Systems must maintain partial functionality during network partitions using circuit breakers, fallback mechanisms, and feature toggles that preserve core services."*
 
 Guidelines capture your team's standards, architectural decisions, security requirements, and performance best practices in a centralized, enforceable format. They work across your entire tech stack and automatically adapt to your codebase's specific context.
-
 
 ---
 
@@ -53,22 +49,26 @@ Guidelines capture your team's standards, architectural decisions, security requ
 
 Pandorian offers two scan modes depending on what you need.
 
-**PR Scan:** Analyzes only the changes introduced in a pull request. Runs via your source control integration (GitHub, GitLab, or Azure DevOps). Violations are flagged in the Pandorian UI for engineering managers to review and analyze, posted as inline comments on the PR and surfaced as a status check in the CI.
+**PR Scan:** Analyzes only the changes introduced in a pull request. Runs via your source control integration (GitHub, GitLab, or Azure DevOps). Violations are flagged in the Pandorian UI for engineering managers to review and analyze, posted as inline comments on the PR, and surfaced as a status check in CI.
 
-When is this used - this is the day to day operating mode for pandorian customers, to enforce their guidelines on new code.
+*When is this used:* This is the day-to-day operating mode for Pandorian customers — enforcing guidelines on new code as it is written.
 
-**Full Repo Scan:** Analyzes an entire repository against selected guidelines. 
+**Full Repo Scan:** Analyzes an entire repository against selected guidelines.
 
-When is this used - this is for audits, onboarding new repositories, or getting a complete picture of where your codebase stands against your guidelines.
+*When is this used:* For audits, onboarding new repositories, or getting a complete picture of where your codebase stands against your guidelines.
+
 ---
 
 ## Violations
-A violation is the result of scanned code, that violates a guideline. Each violation includes the file path, line range and an explanation of why the code violates the guideline. 
+
+A violation is the result of scanned code that violates a guideline. Each violation includes the file path, line range, and an explanation of why the code violates the guideline.
+
+---
 
 ## Enforcement
 
-Pandorian allows two enforcement modes, monitor or block. 
-Guidelines set to **Monitor** surface violations for visibility without interrupting development. 
-Guidelines set to **Block** will block CI/CD pipelines and prevent merge. 
+Pandorian supports two enforcement modes:
 
----
+**Monitor** — surfaces violations for visibility without interrupting development.
+
+**Block** — blocks CI/CD pipelines and prevents merge when a violation is detected.
