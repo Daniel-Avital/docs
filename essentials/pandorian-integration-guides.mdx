@@ -145,7 +145,7 @@ Each Markdown file must contain a YAML frontmatter block with a `pandorian-metad
 | Attribute | Type | Description |
 |---|---|---|
 | `id` | string | Unique identifier (e.g., `scala-expert`) |
-| `language` | string | Target language (e.g., `scala`, `python`) |
+| `language_ids` | string | Target languages (e.g., `scala`, `python`) |
 | `title` | string | Clear, actionable rule name |
 | `block` | boolean | `true` to block on violation; `false` defaults to monitor |
 | `category` | string | Area of focus (e.g., `security`, `performance`) |
@@ -168,7 +168,7 @@ Create a file named `scala-expert.md` in your guidelines directory:
 ---
 pandorian-metadata:
   id: scala-expert
-  language: scala
+  language_ids: [scala]
   title: Scala Functional Programming Expert
   block: true
   category: Architecture
