@@ -3,7 +3,7 @@ title: 'Quick Start'
 description: 'Get up and running with Pandorian in minutes'
 ---
 
-This guide will walk you through setting up Pandorian and experiencing the core value: writing an engineering guideline in plain English, running a scan, and finding violations instantly.
+This guide will walk you through setting up Pandorian and experiencing the core value: writing an engineering guideline in natural language, running a scan, and finding violations instantly.
 
 **Time to first scan:** ~10 minutes
 
@@ -32,8 +32,8 @@ You have two options: create a custom guideline from scratch, or import from an 
 3. Select **Create Guideline**
 4. Fill out the guideline form:
    - **Guideline ID:** A unique identifier (e.g., `SEC-001`, `PERF-002`)
-   - **Labels:** Select a category (Security, Performance, Code Quality, etc.)
-   - **Language:** Choose the programming language this applies to
+   - **Category:** Select a category (Security, Performance, Code Quality, etc.)
+   - **Language:** Choose the programming language/s this applies to
    - **Title:** Clear, actionable name for your rule
    - **Description:** Write your guideline in plain English. Be specific about what should or shouldn't happen in the code.
    - **Enforcement:** Set to **Block** (fails CI/CD on violation) or **Monitor** (surfaces violations without blocking)
@@ -55,12 +55,19 @@ Pandorian supports multiple import sources so you can turn existing documentatio
 
 - **Confluence** — import directly from your team's Confluence pages
 - **Markdown files** — upload any internal documentation or standards docs
-- **Pandorian Catalog** — 2,000+ pre-built best practices across Python, JavaScript, TypeScript, Java, Go, and Scala
+- **Pandorian Catalog** — 2,000+ pre-built best practices across Python, JavaScript, TypeScript, Java, Go, Scala and more
 - **Policy as Code** — import structured policy definitions directly
 
 Browse or search by language, category, or priority and add guidelines to your organization in one click.
 
-## Step 3: Run Your First Scan
+Congrats, your first guidelines are set up. Every PR on your selected repositories will now be scanned against your guidelines.
+
+For advanced usage - see our policy managment where you can define where and when specific guidelines are scanned. 
+
+
+
+
+## Step 3: Run Your First Scan 
 
 1. Navigate to the **Repositories** page
 2. Find the repository you want to scan
