@@ -64,6 +64,31 @@ Congrats, your first guidelines are set up. Every PR on your selected repositori
 
 For advanced usage - see our policy managment where you can define where and when specific guidelines are scanned. 
 
+https://github.com/Daniel-Avital/docs/blob/amitk-pandorian-update1-finish-md-file/essentials/pandorian-integration-guides.mdx#policy-as-code
+
+## Step 3: Review Scan Findings
+
+Once PRs start running, they will be scanned against your guidelines.
+There are two ways to view your findings, per scan or per guideline:
+
+- Per Scan: navigate to the **Scans** page. You'll see a list of all completed scans, sorted by most recent. Scans that contain violations will be flagged with a red 'violations' icon. 
+Click on the scan containing violations, and you will see that non compliant files that contain the violations. Click on the files to expand and view the description of the violation. Click 'view code' button, to view the actual violation within the code snippet.
+
+- Per Guideline: navigate to the **Guidelines** page. Each guideline, that contains violations from scans will have violations badge with the number of open violations. 
+Click the badge, to view the violations. Each violation can be clicked on to view within the code snippet.
+
+
+## Step 4: Take Action on Violations
+
+### View in Context
+Click **View Code** to see the exact violation location with line numbers highlighted and guideline details in the side panel.
+
+### Generate Fix Instructions
+Click **Generate Fix** to create a markdown document with full context, step-by-step remediation instructions, and code suggestions. Feed this directly to AI coding tools like GitHub Copilot, Cursor, or Claude to implement fixes.
+
+### Integrations
+Connect Pandorian to your existing workflow — including **Jira** — to route violations directly into your issue tracker. See the [Integration Guides](https://docs.pandorian.ai/essentials/pandorian-integration-guides) for setup instructions.
+
 
 
 
@@ -75,21 +100,3 @@ For advanced usage - see our policy managment where you can define where and whe
 4. Select **Full Scan** to analyze the entire repository
 
 Pandorian analyzes your codebase against all active guidelines, understanding context and structure rather than just pattern matching.
-
-## Step 4: Review Scan Results
-
-Once your scan completes, navigate to the **Scans** page and double-click the completed scan. You'll see:
-
-- **Non-Compliant Files:** Files that contain violations
-- For each violation: the guideline violated, a detailed explanation of why the code violates it, and the specific lines involved
-
-## Step 5: Take Action on Violations
-
-### View in Context
-Click **View Code** to see the exact violation location with line numbers highlighted and guideline details in the side panel.
-
-### Generate Fix Instructions
-Click **Generate Fix** to create a markdown document with full context, step-by-step remediation instructions, and code suggestions. Feed this directly to AI coding tools like GitHub Copilot, Cursor, or Claude to implement fixes.
-
-### Integrations
-Connect Pandorian to your existing workflow — including **Jira** — to route violations directly into your issue tracker. See the [Integration Guides](https://docs.pandorian.ai/essentials/pandorian-integration-guides) for setup instructions.
