@@ -11,7 +11,7 @@ The fastest way to enforce guidelines is through automatic PR scanning via your 
 
 ### How PR Scanning Works
 
-Once you connect your source control manager during initial setup, PR scanning is automatically triggered on every new PR or Push to an existing PR.
+Once you connect your source control manager during initial setup, PR scanning is automatically triggered on every new PR or push to an existing PR.
 
 **What happens during a PR scan:**
 
@@ -19,7 +19,6 @@ Once you connect your source control manager during initial setup, PR scanning i
 2. Pandorian scans only the modified files against guidelines.
 3. Violations appear as inline comments on specific lines and as a summary comment on the PR (if opted in)
 4. The PR check appears in your source control's status checks (configurable as required or optional)
-
 
 ### PR Actions
 
@@ -188,6 +187,26 @@ inclusions:
 
 ---
 
+## Scan Policies
+
+Scan Policies let you define exactly where and how guidelines run — which paths to ignore, and which guideline groups to scope to specific files or directories. Repo-level overrides take precedence over org-level defaults.
+
+Navigate to **Scan Policies** in the Pandorian dashboard to configure.
+
+### Organization Policy
+
+Organization-level policy applies across all repositories by default.
+
+**Ignored Paths:** Paths that should never be scanned, applied to all guidelines. Use this to exclude vendor code, generated files, test fixtures, or any directory that shouldn't be subject to enforcement. Click **Ignore a path** to add an exclusion.
+
+**Guideline Scoping:** Restrict a guideline group to specific paths only. Rather than running all guidelines across the entire codebase, scoping rules let you target enforcement by tag — for example, applying security guidelines only to the auth service, or data guidelines only to migration files. Click **Add scoping rule** to configure.
+
+### Repository Overrides
+
+Repository overrides let you customize scan policy for a specific repository, overriding the organization defaults. This is useful when a particular repo has different conventions, third-party code that should be excluded, or guidelines that only apply in that context. Click **Add repository override** to configure.
+
+---
+
 ## Dynamic Context Providers
 
 Dynamic Context Providers connect external data sources directly to your guidelines, ensuring they evaluate code against real-time context — approved libraries, internal API routes, active feature flags — rather than static hardcoded lists.
@@ -250,7 +269,3 @@ A **Ticket Preview** panel shows the rendered output before submission.
 ### Ticket History & Lifecycle
 
 A **Tickets** page in Pandorian shows all issues opened, so you can track escalations without leaving the dashboard. Pandorian does not automatically close, update, or comment on tickets — lifecycle is managed within Jira.
-
----
-
-
