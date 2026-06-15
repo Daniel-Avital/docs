@@ -208,7 +208,7 @@ Repository overrides let you customize scan policy for a specific repository, ov
 ### Examples
  
 **Ignoring test files across all repositories:**
-Your org runs security and architecture guidelines across all repos. Test files shouldn't be subject to the same enforcement as production code. Add glob patterns like `**.test.ts`, `**.test.js`, `**.cy.js`, and `**/*_test.go` as ignored paths — Pandorian will skip those files across all guidelines without any per-guideline configuration.
+Test files shouldn't be subject to the same enforcement as production code. Add your test file glob patterns as ignored paths — Pandorian will skip those files across all guidelines without any per-guideline configuration.
  
 **Scoping compliance guidelines to sensitive services:**
 Your organization has a set of guidelines tagged `pci-compliance`. Rather than running them across every repository, create a scoping rule that restricts them to repos or paths containing payment processing code. Every other repo is unaffected.
