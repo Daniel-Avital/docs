@@ -10,16 +10,17 @@
   "favicon": "/favicon.svg",
   "navigation": {
     "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "essentials/pandorian-introduction",
-              "essentials/pandorian-core-concepts",
-              "essentials/pandorian-quick-start",
-              "essentials/pandorian-integrations"
-            ]
-          }
-        ],
+      {
+        "group": "Getting started",
+        "pages": [
+          "essentials/pandorian-introduction",
+          "essentials/pandorian-core-concepts",
+          "essentials/pandorian-quick-start",
+          "essentials/pandorian-guides",
+          "essentials/pandorian-integrations"
+        ]
+      }
+    ],
     "global": {
       "anchors": []
     }
@@ -28,9 +29,7 @@
     "light": "/Pandorian-Logo.png",
     "dark": "/Pandorian-Logo.png"
   },
-  "navbar": {
-  },
-  
+  "navbar": {},
   "footer": {
     "socials": {
       "linkedin": "https://www.linkedin.com/company/pandorian-ai"
