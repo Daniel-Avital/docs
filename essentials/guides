@@ -1,0 +1,599 @@
+---
+
+title: 'Guides'
+description: 'Practical guides for managing, scoping, enforcing, and administering Pandorian guidelines'
+--------------------------------------------------------------------------------------------------------
+
+Pandorian helps engineering teams turn their standards into enforceable rules across repositories and pull requests. This guide covers the main workflows for managing guidelines, scoping where they apply, enforcing them in scans and pull requests, and onboarding your team.
+
+## Manage
+
+Use these workflows to create, import, organize, and enrich the guidelines that Pandorian enforces.
+
+### Creating a Guideline from Scratch
+
+Create a custom guideline when you want Pandorian to enforce a rule that is specific to your engineering organization, architecture, frameworks, internal libraries, or coding standards.
+
+To create a guideline:
+
+1. Navigate to the **Guidelines** page.
+2. Click **+ New Guideline**.
+3. Select **Guideline**.
+4. Fill in the required fields.
+5. Click **Save changes**.
+
+A guideline includes the rule Pandorian should enforce, the language or languages it applies to, and the enforcement behavior.
+
+Required fields include:
+
+* **Guideline ID**: A unique, manually defined identifier for the guideline.
+* **Title**: A clear name for the rule.
+* **Description**: The actual instruction Pandorian should enforce.
+* **Category**: The engineering area this guideline belongs to.
+* **Language**: One or more languages this guideline applies to.
+* **Blocked mode**: Whether the guideline runs in Monitor mode or blocks the build.
+* **Active / Inactive**: Whether the guideline is currently enforced.
+
+Supported categories include:
+
+* Architecture
+* Code Quality & Maintainability
+* Data & Storage
+* Infrastructure & Environments
+* Observability
+* Performance & Scalability
+* Reliability & Resilience
+* Security
+
+Guideline tags are optional. You can choose an existing tag or create a new one while creating the guideline. Tags help organize guidelines and can later be used in scan policies to control where groups of guidelines run.
+
+Scoping is not managed directly from the guideline creation form. Use **Scan Policies** to decide where tagged guidelines should run across repositories and paths.
+
+#### Writing a strong guideline
+
+A good guideline is specific, enforceable, and written in a way that Pandorian can evaluate against code.
+
+Strong guidelines usually include:
+
+* The rule the code must follow.
+* The reason the rule exists.
+* Examples of compliant or non-compliant patterns.
+* Any important exceptions.
+* Language, framework, or architecture context.
+
+Good example:
+
+> All database credentials must be loaded from environment variables or a secrets manager. Do not hardcode usernames, passwords, tokens, or connection strings directly in source code.
+
+This guideline is enforceable because it names the risky pattern, describes the expected behavior, and gives Pandorian enough context to identify violations.
+
+Weak example:
+
+> Write secure code.
+
+This guideline is too broad. It does not explain what secure code means, which patterns should be rejected, or what compliant code should look like.
+
+For deeper guidance on authoring enforceable guidelines, see [Authoring Enforceable Guidelines](https://pandorian.ai/research/authoring-enforceable-guidelines/).
+
+#### Testing a new guideline
+
+After creating a guideline, test it with a PR scan when possible. PR scans are usually the best way to validate a new guideline because they focus on changed code and give you faster feedback.
+
+You can also run a full repository scan, but full scans may be limited depending on your plan and should be used more selectively.
+
+A recommended rollout is:
+
+1. Create the guideline.
+2. Start in **Monitor only** mode.
+3. Run it against a PR.
+4. Review the violations.
+5. Refine the guideline if needed.
+6. Move to **Block Build** only after you trust the results.
+
+---
+
+### Importing Guidelines from Confluence or Markdown
+
+Use imports when your engineering standards already exist in another place, such as Confluence pages or Markdown files used by engineering teams or AI coding agents.
+
+To import guidelines:
+
+1. Navigate to the **Guidelines** page.
+2. Click **+ New Guideline**.
+3. Choose one of the import options:
+
+   * **from Confluence**
+   * **from File**
+   * **from Catalog**
+
+Pandorian extracts the source text and returns editable guidelines for review. Imported guidelines are not active by default, so you can inspect and edit them before enabling enforcement.
+
+#### Importing from Confluence
+
+Use the Confluence import when your engineering standards live in Confluence.
+
+The flow is:
+
+1. Connect your Confluence workspace.
+2. Choose a Confluence space.
+3. Select the page you want to import.
+4. Let Pandorian extract potential guidelines from the page.
+5. Review and edit the extracted guidelines.
+6. Save the guidelines you want to use.
+
+Pandorian does not preserve Confluence page hierarchy as part of the guideline structure. The imported content is converted into editable guidelines that can be reviewed one by one.
+
+#### Importing from Markdown
+
+Use Markdown import when you have standards written in `.md` files.
+
+The flow is:
+
+1. Click **+ New Guideline** from the Guidelines page.
+2. Select **from File**.
+3. Upload a `.md` file.
+4. Review the guidelines Pandorian extracts.
+5. Edit and save the guidelines you want to use.
+
+Pandorian supports one Markdown file per upload. Imported guidelines are reviewed one by one before activation.
+
+This is also useful for Markdown files used by AI agents or coding assistant skill systems. If your agent skills are stored as `.md` files, you can upload those files to Pandorian and turn the same instructions into enforceable guidelines.
+
+#### When to use Guidelines as Code instead
+
+Use **Guidelines as Code** when your team wants to manage guidelines directly from Git and review guideline changes through pull requests.
+
+For setup details, see [Guidelines as Code](https://docs.pandorian.ai/essentials/pandorian-integrations#guidelines-as-code).
+
+---
+
+### Guidelines as Code
+
+Guidelines as Code lets teams manage Pandorian guidelines from Markdown files in Git.
+
+This is useful when engineering standards should be versioned, reviewed, and updated through the same workflow as code. Teams can use this to keep internal Markdown guidelines or AI coding assistant skill files aligned with the rules Pandorian enforces.
+
+Guidelines as Code is configured through the source control integration.
+
+For setup details, see [Guidelines as Code](https://docs.pandorian.ai/essentials/pandorian-integrations#guidelines-as-code).
+
+---
+
+### Using the Guidelines Catalog
+
+The Guidelines Catalog gives you a starting point for common engineering standards across supported languages and categories.
+
+To import a catalog guideline:
+
+1. Navigate to the **Guidelines** page.
+2. Click **+ New Guideline**.
+3. Select **from Catalog**.
+4. Browse or search for a guideline.
+5. Import the guideline into your organization.
+6. Choose its enforcement mode.
+7. Add tags if you want to use it with scan policies.
+
+You can browse the catalog by language and category, or search by keyword.
+
+The in-product catalog is the same catalog available at [pandorian.ai/catalog](https://pandorian.ai/catalog).
+
+When you import a catalog guideline, it becomes a guideline in your organization. It does not remain linked to the public catalog. You can configure how it should behave in your environment, including whether it should run in Monitor mode or Block Build mode.
+
+Catalog guidelines cannot be scoped directly from the catalog itself. To scope them, add useful tags and then use Scan Policies to decide where those tagged guidelines should run.
+
+---
+
+### Dynamic Context Providers
+
+Some guidelines need live context, not just static text.
+
+Dynamic Context Providers let guidelines evaluate code against real-time data, such as approved libraries, internal API routes, active feature flags, or configuration flags.
+
+A provider can be configured with:
+
+* **Title**
+* **Command**
+* **Grep**
+* **Timeout**
+
+Use Dynamic Context Providers when a guideline depends on information that may change over time.
+
+For setup details, see [Dynamic Context Providers](https://docs.pandorian.ai/essentials/pandorian-integrations#dynamic-context-providers).
+
+---
+
+## Scope
+
+Use scoping to control where guidelines run, which code they apply to, and which files Pandorian should ignore.
+
+### Scoping Guidelines
+
+Scoping lets you decide which guidelines should run against which repositories, languages, paths, or parts of the codebase.
+
+In Pandorian, scoping is mainly managed through **Scan Policies**.
+
+Navigate to **Scan Policies** from the left sidebar to configure where guidelines run.
+
+Scan Policies help you:
+
+* Ignore paths that should not be scanned.
+* Scope guideline groups to specific files or directories.
+* Apply organization-level defaults.
+* Add repository-level overrides.
+* Use guideline tags to decide which groups of guidelines apply where.
+
+#### Organization-level policy
+
+Organization-level policy applies across repositories by default.
+
+Use organization-level policy for rules that should be consistent across the organization, such as ignoring generated files, vendor directories, or other paths that should not be scanned.
+
+Common organization-level ignored paths include:
+
+* Generated files
+* Vendor directories
+* Dependency folders
+* Test fixtures
+* Build outputs
+
+To add an ignored path, click **Ignore a path**.
+
+#### Guideline scoping
+
+Guideline scoping lets you run tagged groups of guidelines only where they are relevant.
+
+Instead of running every guideline across every file, you can scope a guideline tag to a specific path.
+
+Examples:
+
+* Run security guidelines only against authentication code.
+* Run data guidelines only against migration files.
+* Run infrastructure guidelines only against deployment configuration.
+* Run team-specific guidelines only against repositories owned by that team.
+
+To add a scoping rule, click **Add scoping rule**.
+
+#### Repository overrides
+
+Repository overrides let you customize scan policy for a specific repository.
+
+Use repository overrides when one repository has different conventions, contains legacy code, includes generated files in unusual paths, or requires different scoping than the organization default.
+
+To add a repository override, click **Add repository override**.
+
+Repository-level overrides take precedence over organization-level defaults.
+
+#### Tags and scan policies
+
+Guideline tags help organize guidelines and apply groups of guidelines through scan policies.
+
+A tag can be created when you create or edit a guideline. Tags are free text, so each organization can define the taxonomy that makes sense for its teams and repositories.
+
+For example, you might tag guidelines with:
+
+* `security`
+* `auth`
+* `data-storage`
+* `platform`
+* `team-a`
+* `v2`
+
+Then, in Scan Policies, you can decide where guidelines with those tags should run.
+
+Example:
+
+* Guidelines tagged `auth` run only on `src/auth/**`.
+* Guidelines tagged `data-storage` run only on `db/migrations/**`.
+* Guidelines tagged `platform` run only on platform-owned repositories.
+
+This reduces noise and helps enforce the right standards in the right parts of the codebase.
+
+#### Common scoping examples
+
+**Ignore generated files**
+
+Generated files usually should not be reviewed against human-authored engineering standards. Add ignored path patterns for generated code so Pandorian skips them during scans.
+
+**Ignore vendor directories**
+
+Third-party or vendored code is usually not owned by your team. Add vendor paths to ignored paths so violations are not reported for code your team does not maintain.
+
+**Apply security guidelines only to authentication services**
+
+Tag relevant guidelines with `auth` or `security`, then scope that tag to authentication-related paths or repositories.
+
+**Apply data guidelines only to migration files**
+
+Tag data-related guidelines with `data-storage`, then scope them to migration folders.
+
+**Override organization defaults for a legacy repository**
+
+If a legacy repository needs different behavior, create a repository override instead of changing the organization-wide policy for every repository.
+
+---
+
+### Policy as Code
+
+Policy as Code lets you configure repository-level settings as code, so Pandorian knows which guidelines to run and when to block pull requests without managing these rules outside the codebase.
+
+A Pandorian policy is defined in a `.Pandorian/.policy` file inside the repository and applies to both full repository scans and PR scans.
+
+Policy as Code can define:
+
+* Which guideline tags apply to the repository.
+* Which files or directories should be excluded from scans.
+* Which guideline tags should apply only to specific paths.
+
+Keep Policy as Code in the Integrations guide as the technical source of truth, and use this Guides page as the conceptual overview.
+
+For setup details, see [Policy as Code](https://docs.pandorian.ai/essentials/pandorian-integrations#policy-as-code).
+
+---
+
+## Enforce
+
+Use these workflows to run scans, review violations, and enforce guidelines in pull requests.
+
+### Running a Repository Scan
+
+Pandorian supports two scan types:
+
+* **Full repository scans**
+* **PR scans**
+
+A full repository scan analyzes the repository against selected guidelines. A PR scan analyzes the code changes in a pull request.
+
+Use PR scans when you want fast feedback on new changes. Use full repository scans when you want to understand guideline compliance across a repository.
+
+#### Running a full repository scan
+
+To run a full repository scan:
+
+1. Navigate to the **Repositories** page.
+2. Select the repository you want to scan.
+3. Click the play button.
+4. Choose the guideline you want to scan against.
+5. Start the scan.
+
+Full repository scans analyze the repository while respecting configured scan policies, ignored paths, and repository overrides.
+
+#### Running a PR scan
+
+PR scans run automatically after source control is connected.
+
+A PR scan is triggered when:
+
+* A new pull request is opened.
+* A developer pushes updates to an existing pull request.
+* A pull request is reopened.
+
+PR scans analyze the changes in the pull request and respect configured scan policies.
+
+#### Reviewing scan results
+
+Scan results show:
+
+* Repository
+* Scan ID
+* Violations count
+* Duration
+* Status
+* Guidelines checked
+
+When a scan includes violations, click into the result to see where the violations were found and which lines were affected.
+
+To run the scan again, click **Re-scan**.
+
+---
+
+### Viewing Violations from the Scans Page or Guidelines Page
+
+Pandorian gives you two main ways to view violations: from the **Scans** page or from the **Guidelines** page.
+
+Use the Scans page when you want to review the result of a specific scan.
+
+Use the Guidelines page when you want to understand all violations related to a specific guideline.
+
+#### Viewing violations from the Scans page
+
+The **Scans** page is best for reviewing scan-level results.
+
+Each scan shows information such as:
+
+* Started At
+* Scan ID
+* Violations
+* Duration
+* Status
+* Repository
+* Pull request, when relevant
+
+Open a scan to see whether it has violations and where those violations were found.
+
+You can filter scans by:
+
+* Scan type
+* PR status
+* Date range
+* Repository
+* With violations
+* Without violations
+
+Supported PR statuses include:
+
+* Opened
+* Merged
+* Closed
+
+Use these filters to focus on the scans that matter most, such as recent PR scans with violations or merged PRs that introduced guideline violations.
+
+#### Viewing violations from the Guidelines page
+
+The **Guidelines** page is best for understanding violations by guideline.
+
+From the Guidelines page, open a guideline or click its violation badge to see violations related to that rule across scans.
+
+This view is useful when you want to understand how widespread a guideline violation is, which repositories are affected, or whether a guideline is ready to move from Monitor mode to Block Build mode.
+
+---
+
+### Setting Up PR Enforcement as a CI Check
+
+Pandorian integrates with source control so guidelines can be enforced directly in pull requests.
+
+Supported source control providers include:
+
+* GitHub
+* GitLab
+* Azure DevOps
+
+Bitbucket is not currently supported.
+
+After source control is connected, PR scanning runs automatically when a pull request is opened, updated, or reopened.
+
+Pandorian can add inline comments on pull requests to show where violations were found.
+
+#### Monitor mode
+
+Monitor mode reports violations without blocking the build.
+
+Use Monitor mode when introducing new guidelines, testing guideline quality, or rolling Pandorian out gradually across teams.
+
+In Monitor mode, developers and engineering leaders can see violations, but the build is not blocked.
+
+#### Block Build mode
+
+Block Build mode blocks the build when violations are found.
+
+Use Block Build mode only after you have validated the guideline and trust the results.
+
+A recommended rollout is:
+
+1. Start in Monitor mode.
+2. Review real violations over time.
+3. Refine the guideline if needed.
+4. Move to Block Build mode when the team is confident in the rule.
+
+#### Skipping a CI check
+
+For a specific scan, you can skip the CI check from the Scans page.
+
+Click **Skip CI Check** to skip blocking behavior for that scan. The scan still runs, but the CI check is skipped for that specific PR.
+
+---
+
+### Reading Violation Reports
+
+Violation reports show where code does not comply with a guideline and what the developer can do next.
+
+A violation report can include:
+
+* Guideline title
+* Repository
+* File path
+* Line number
+* Code snippet
+* Explanation
+* Fix suggestion
+
+Pandorian does not show severity in the violation report. Confidence is handled internally.
+
+#### Viewing the affected code
+
+Click **View Code** to inspect the relevant code around the violation.
+
+Use this when you want to understand the exact context before taking action.
+
+#### Generating a fix
+
+Click **Generate Fix** to create remediation instructions.
+
+Generate Fix produces Markdown instructions that can be copied into an AI coding agent or used by a developer. The Markdown includes code suggestions, but it does not automatically create a patch or pull request.
+
+#### Archiving a violation
+
+Click **Archive Violation** when a finding is no longer relevant.
+
+Archived violations are excluded from future Jira ticket creation and reporting views.
+
+Use archive for findings that are accepted, irrelevant, or no longer useful to track.
+
+#### Creating Jira issues
+
+If Jira is connected, Pandorian can create Jira issues from guideline violations.
+
+From the **Guidelines** page, click the violation badge on a guideline, then click **Create Issue**. Pandorian generates a ticket draft containing all current open violations for that guideline in bulk.
+
+Before creating a Jira ticket, archive irrelevant violations so they are not included in the generated issue.
+
+For Jira setup details, see [Jira Integration](https://docs.pandorian.ai/essentials/pandorian-integrations#jira-integration).
+
+---
+
+## Admin
+
+Use these workflows to bring your team into Pandorian and manage access.
+
+### Onboarding Users
+
+Admins can invite users from the **Users** page.
+
+To invite a user:
+
+1. Navigate to the **Users** page.
+2. Click **Invite user**.
+3. Enter the user's name.
+4. Enter the user's email address.
+5. Choose a role.
+6. Send the invite.
+
+Users receive an email invitation. Invites can expire, and admins can resend them when needed.
+
+Users are invited one at a time.
+
+#### Roles
+
+Pandorian supports four roles:
+
+**Owner**
+
+Full access to all organization settings and resources.
+
+Use this for the person responsible for the Pandorian organization, billing, security-sensitive settings, and top-level administration.
+
+**Admin**
+
+Administrative access with user management capabilities.
+
+Use this for team members who need to manage users and help administer the organization.
+
+**Maintainer**
+
+Can manage repositories and guidelines.
+
+Use this for platform engineers, architects, or engineering leads who own guideline creation, repository setup, and day-to-day rule management.
+
+**Member**
+
+Basic access to view and contribute.
+
+Use this for developers or stakeholders who need access to Pandorian but should not manage organization-wide settings.
+
+---
+
+### SSO
+
+Pandorian supports SSO for enterprise authentication.
+
+SSO is not self-serve in the product today. Contact the Pandorian team to configure SSO for your organization.
+
+Pandorian supports common SSO setups, including providers such as:
+
+* Google Workspace
+* Microsoft Entra ID / Azure AD
+* Okta
+* OneLogin
+
+Users can be created automatically on first login. SSO can be required for all users. Role mapping is supported, but roles are not automatically assigned unless configured as part of the SSO setup.
+
+Because SSO setup depends on the customer's identity provider, the Pandorian team will guide the configuration process and confirm the required metadata, domain settings, and testing steps during onboarding.
