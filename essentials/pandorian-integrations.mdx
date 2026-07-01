@@ -184,40 +184,6 @@ inclusions:
         value: "db/migrations/**"
         case_sensitive: true
 ```
-
----
-
-## Scan Policies
- 
-Scan Policies let you define exactly where and how guidelines run — which paths to ignore, and which guideline groups to scope to specific files or directories. Repo-level overrides take precedence over org-level defaults.
- 
-Navigate to **Scan Policies** in the Pandorian dashboard to configure.
- 
-### Organization Policy
- 
-Organization-level policy applies across all repositories by default.
- 
-**Ignored Paths:** Paths that should never be scanned, applied to all guidelines. Use this to exclude vendor code, generated files, test fixtures, or any directory that shouldn't be subject to enforcement. Click **Ignore a path** to add an exclusion.
- 
-**Guideline Scoping:** Restrict a guideline group to specific paths only. Rather than running all guidelines across the entire codebase, scoping rules let you target enforcement by tag — for example, applying security guidelines only to the auth service, or data guidelines only to migration files. Click **Add scoping rule** to configure.
- 
-### Repository Overrides
- 
-Repository overrides let you customize scan policy for a specific repository, overriding the organization defaults. This is useful when a particular repo has different conventions, third-party code that should be excluded, or guidelines that only apply in that context. Click **Add repository override** to configure.
- 
-### Examples
- 
-**Ignoring test files across all repositories:**
-Test files shouldn't be subject to the same enforcement as production code. Add your test file glob patterns as ignored paths — Pandorian will skip those files across all guidelines without any per-guideline configuration.
- 
-**Scoping compliance guidelines to sensitive services:**
-Your organization has a set of guidelines tagged `pci-compliance`. Rather than running them across every repository, create a scoping rule that restricts them to repos or paths containing payment processing code. Every other repo is unaffected.
- 
-**Scoping security guidelines to the auth layer:**
-Security guidelines tagged `auth` should only apply to the `/src/auth` directory. Set a scoping rule so those guidelines run exclusively on that path — reducing noise in unrelated parts of the codebase while enforcing strictly where it matters.
- 
-**Overriding org defaults for a legacy repository:**
-Your org-wide policy excludes test files from scanning. A legacy repo requires the opposite — tests are the only place certain patterns are enforced. Add a repository override to configure a different ignored paths policy for that repo without affecting the rest of the organization.
  
 ---
 
