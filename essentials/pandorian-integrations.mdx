@@ -9,26 +9,6 @@ Pandorian integrates into your existing SDLC to enforce guidelines continuously 
 
 The fastest way to enforce guidelines is through automatic PR scanning via your source control integration. Pandorian supports **GitHub**, **GitLab**, and **Azure DevOps**.
 
-## Multi-Org Governance
-
-Multi-Org Governance connects multiple git organizations — any mix of GitHub, GitLab, and Azure DevOps — to a single Pandorian account.
-
-Use this when your engineering organization runs multiple git organizations by design (one per business unit or product line), or has inherited additional organizations through an acquisition.
-
-### How It Works
-
-One Pandorian account can hold a separate view for each connected org. Every org keeps its own guideline catalog, scan history, and UI, exactly as it operated before joining — data is not merged between orgs. What changes is that all of them are now managed from that one account instead of separate logins.
-
-### Connecting an Additional Org
-
-Connect each additional git organization the same way you connected your first — through the standard source control integration flow. Pandorian adds it as its own view under your account automatically. No repos move, no orgs get renamed, nothing migrates.
-
-### Guidelines Are Not Shared Across Orgs
-
-Multi-Org Governance adds one place to manage from, not shared rules or shared data. Each connected org keeps the guidelines it already has, whether that's a full custom catalog or none yet. Standardizing guidelines across orgs is a decision your team makes deliberately, on its own timeline.
-
-***
-
 ### How PR Scanning Works
 
 Once you connect your source control manager during initial setup, PR scanning is automatically triggered on every new PR or push to an existing PR.
@@ -57,7 +37,25 @@ Once you connect your source control manager during initial setup, PR scanning i
 **Monitoring Mode** (useful for gradual rollout): Pipeline continues regardless of violations. Scan results are logged for visibility. Set exit code 0 and log violations without blocking.
 
 ---
+## Multi-Org Governance
 
+Multi-Org Governance connects multiple git organizations — any mix of GitHub, GitLab, and Azure DevOps — to a single Pandorian account.
+
+Use this when your engineering organization runs multiple git organizations by design (one per business unit or product line), or has inherited additional organizations through an acquisition.
+
+### How It Works
+
+One Pandorian account can hold a separate view for each connected org. Every org keeps its own guideline catalog, scan history, and UI, exactly as it operated before joining — data is not merged between orgs. What changes is that all of them are now managed from that one account instead of separate logins.
+
+### Connecting an Additional Org
+
+Connect each additional git organization the same way you connected your first — through the standard source control integration flow. Pandorian adds it as its own view under your account automatically. No repos move, no orgs get renamed, nothing migrates.
+
+### Guidelines Are Not Shared Across Orgs
+
+Multi-Org Governance adds one place to manage from, not shared rules or shared data. Each connected org keeps the guidelines it already has, whether that's a full custom catalog or none yet. Standardizing guidelines across orgs is a decision your team makes deliberately, on its own timeline.
+
+***
 ## Guidelines as Code
 
 High-velocity teams can manage guidelines directly within their code repositories, treating engineering standards as living documentation that evolves alongside the codebase.
