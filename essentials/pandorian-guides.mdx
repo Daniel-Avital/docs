@@ -243,6 +243,24 @@ Your org-wide policy excludes test files from scanning. A legacy repo requires t
 
 ---
 
+### Initiatives
+ 
+Initiatives group any guidelines and any repos you choose under a program you define — whether that's OWASP Top 10, SOC 2 Type II, an internal architecture standard, or a goal specific to your org. There is no fixed list of programs Pandorian ships with. Each Initiative shows a live compliance percentage that updates as scans run.
+ 
+An Initiative is a named container, not a preset compliance template. If your org can describe something as "these guidelines, on these repos," it can be an Initiative — a migration, a security push, a performance commitment, or a standard one team is rolling out to the rest of the org.
+ 
+**Pick the guidelines.** Guidelines attached to an Initiative can come from the catalog, your own imported standards, or anything written from scratch. The Initiative only needs to know which guidelines count toward this specific program.
+ 
+**Attach the repos.** Attach only the repositories the program actually applies to. A SOC 2 Initiative might only need the services that touch customer data; a performance Initiative might need whatever is user-facing and latency-sensitive. A repository can belong to more than one Initiative at once, since a single service can fall under OWASP Top 10, SOC 2, and an internal API standard simultaneously.
+ 
+**Track one live percentage.** Every Initiative shows a compliance percentage calculated from its own attached guidelines and repos, refreshed as scans run. This gives leadership a number they can check without pinging teams for a status update — for a compliance audit, a migration, or any other program.
+ 
+#### Initiatives vs. tags
+ 
+A tag (or category like Security) groups guidelines by type. An Initiative groups a specific subset of guidelines and repos into one trackable unit with its own score, regardless of category. Use tags to organize and scope guidelines; use Initiatives to measure progress against a defined program.
+ 
+---
+
 ### Policy as Code
 
 Policy as Code lets you configure repository-level settings as code, so Pandorian knows which guidelines to run and when to block pull requests without managing these rules outside the codebase.
@@ -254,8 +272,6 @@ Policy as Code can define:
 - Which guideline tags apply to the repository.
 - Which files or directories should be excluded from scans.
 - Which guideline tags should apply only to specific paths.
-
-Keep Policy as Code in the Integrations guide as the technical source of truth, and use this Guides page as the conceptual overview.
 
 For setup details, see [Policy as Code](/essentials/pandorian-integrations#policy-as-code).
 
