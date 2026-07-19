@@ -212,13 +212,13 @@ For a file in a repository, Pandorian checks the following in order. As soon as 
 1. **Repository Included Paths** — If the repository has Included Paths configured and the file falls outside them, the file is not scanned.
 2. **Repository-level Guideline Scoping** — If the file matches a scoping rule configured on this repository, it's scanned, but only with the guidelines named in that rule.
 3. **Organization-level Guideline Scoping** — If the file matches a scoping rule configured at the organization level, it's scanned, but only with the guidelines named in that rule.
-4. **Repository Ignored Paths** — If the file matches an ignored path configured on this repository, it is not scanned.
-5. **Organization Ignored Paths** — If the file matches an ignored path configured at the organization level, it is not scanned.
+4. **Repository Excluded Paths** — If the file matches an excluded path configured on this repository, it is not scanned.
+5. **Organization Excluded Paths** — If the file matches an excluded path configured at the organization level, it is not scanned.
 6. **Default** — If none of the above apply, the file is scanned against every active guideline.
 
 > **Note:** Included Paths only exists as a repository-level setting. There's no organization-wide Included Paths gate — organization-wide inclusion is expressed through Guideline Scoping (step 3), not through a separate allowlist.
 >
-> Because Guideline Scoping (steps 2–3) is checked before Ignored Paths (steps 4–5), a file that matches a scoping rule is scanned even if it would otherwise fall under an Ignored Paths rule — the Ignored Paths check is never reached for that file. If a path needs to be excluded no matter what, use Repository Included Paths (step 1); it's the only check nothing later can override.
+> Because Guideline Scoping (steps 2–3) is checked before Excluded Paths (steps 4–5), a file that matches a scoping rule is scanned even if it would otherwise fall under an Excluded Paths rule — the Excluded Paths check is never reached for that file. If a path needs to be excluded no matter what, use Repository Included Paths (step 1); it's the only check nothing later can override.
 
 #### Path evaluation order at a glance
 
@@ -230,9 +230,9 @@ flowchart TD
     C -->|Yes| C1[Scanned with that rule's guidelines]
     C -->|No| D{f matches an org-level<br/>Guideline Scoping rule?}
     D -->|Yes| D1[Scanned with that rule's guidelines]
-    D -->|No| E{f matches a repo-level<br/>Ignored Paths rule?}
+    D -->|No| E{f matches a repo-level<br/>Excluded Paths rule?}
     E -->|Yes| E1[Not scanned]
-    E -->|No| F{f matches an org-level<br/>Ignored Paths rule?}
+    E -->|No| F{f matches an org-level<br/>Excluded Paths rule?}
     F -->|Yes| F1[Not scanned]
     F -->|No| G[Scanned with all active guidelines]
 ```
@@ -243,7 +243,7 @@ Organization-level policy applies across all repositories by default, and is che
 
 **Guideline Scoping:** Restrict a guideline group to specific paths across the organization. Rather than running all guidelines across the entire codebase, scoping rules let you target enforcement by tag — for example, applying security guidelines only to the auth service, or data guidelines only to migration files. Click **Add scoping rule** to configure.
 
-**Ignored Paths:** Paths that should never be scanned, applied org-wide — for files that didn't already match a Guideline Scoping rule first. Use this to exclude vendor code, generated files, test fixtures, or any directory that shouldn't be subject to enforcement. Click **Ignore a path** to add an exclusion.
+**Excluded Paths:** Paths that should never be scanned, applied org-wide — for files that didn't already match a Guideline Scoping rule first. Use this to exclude vendor code, generated files, test fixtures, or any directory that shouldn't be subject to enforcement. Click **Exclude a path** to add an exclusion.
 
 #### Repository Overrides
 
@@ -253,7 +253,7 @@ Repository overrides customize scan policy for a specific repository. Every repo
 
 **Guideline Scoping:** The same scoping mechanism as the organization level, but scoped to this repository only, and checked before organization-level scoping rules.
 
-**Ignored Paths:** The same exclusion mechanism as the organization level, but scoped to this repository only, and checked before organization-level ignored paths — and, like all Ignored Paths rules, only reached if the file didn't already match a Guideline Scoping rule.
+**Excluded Paths:** The same exclusion mechanism as the organization level, but scoped to this repository only, and checked before organization-level excluded paths — and, like all Excluded Paths rules, only reached if the file didn't already match a Guideline Scoping rule.
 
 #### Examples
 
@@ -266,11 +266,11 @@ Your organization has a set of guidelines tagged `pci-compliance`. Create an org
 **Scoping security guidelines to one repo's auth layer:**
 Security guidelines tagged `auth` should only apply to `/src/auth` in a single repository, not organization-wide. Add a repository-level scoping rule instead of an organization-level one — it's checked first and won't affect any other repo.
 
-**A scoping rule reaching a file you meant to ignore:**
-Your organization ignores `**/generated/**` org-wide. A repository-level scoping rule tags everything under `/src` with `code-quality` guidelines, and `/src/generated` happens to fall inside that path. Because Guideline Scoping is checked before Ignored Paths, files in `/src/generated` are scanned with the `code-quality` guidelines — the org-wide ignore rule is never reached for them. To exclude `/src/generated` no matter what, keep it outside that repository's Included Paths instead.
+**A scoping rule reaching a file you meant to exclude:**
+Your organization excludes `**/generated/**` org-wide. A repository-level scoping rule tags everything under `/src` with `code-quality` guidelines, and `/src/generated` happens to fall inside that path. Because Guideline Scoping is checked before Excluded Paths, files in `/src/generated` are scanned with the `code-quality` guidelines — the org-wide exclusion rule is never reached for them. To exclude `/src/generated` no matter what, keep it outside that repository's Included Paths instead.
 
 **Overriding org defaults for a legacy repository:**
-Your org-wide policy ignores test files. A legacy repo requires the opposite — tests are the only place certain patterns are enforced. Add a repository-level Ignored Paths override for that repo's non-test files, without affecting the rest of the organization.
+Your org-wide policy excludes test files. A legacy repo requires the opposite — tests are the only place certain patterns are enforced. Add a repository-level Excluded Paths override for that repo's non-test files, without affecting the rest of the organization.
 
 ---
 
