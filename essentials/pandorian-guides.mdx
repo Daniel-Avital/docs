@@ -314,14 +314,15 @@ Use these workflows to run scans, review violations, and enforce guidelines in p
 
 ### Running a Repository Scan
 
-Pandorian supports two scan types:
+Pandorian supports three scan types:
 
 - **Full repository scans**
+- **Targeted scans**
 - **PR scans**
 
-A full repository scan analyzes the repository against selected guidelines. A PR scan analyzes the code changes in a pull request.
+A full repository scan analyzes the entire repository against selected guidelines. A targeted scan analyzes a single path in the repository, so it finishes faster and is ideal for quickly validating a guideline. A PR scan analyzes the code changes in a pull request.
 
-Use PR scans when you want fast feedback on new changes. Use full repository scans when you want to understand guideline compliance across a repository.
+Use PR scans when you want fast feedback on new changes. Use targeted scans when you want to validate a guideline against a specific area without scanning everything. Use full repository scans when you want to understand guideline compliance across a whole repository.
 
 #### Running a full repository scan
 
@@ -334,6 +335,25 @@ To run a full repository scan:
 5. Start the scan.
 
 Full repository scans analyze the repository while respecting configured scan policies, ignored paths, and repository overrides.
+
+#### Running a targeted scan
+
+A targeted scan runs against a single path in your repository instead of the whole thing. It's the quickest way to validate a guideline — confirm it behaves as expected on the code you care about without waiting for a full repository scan. Full repository scans remain available whenever you need complete coverage.
+
+Use a targeted scan when you want to:
+
+- Validate a new or edited guideline against a specific area of the codebase before rolling it out more widely.
+- Re-check a single service or directory after a fix, without re-scanning everything.
+- Iterate quickly, since a targeted scan only analyzes the path you select.
+
+To run a targeted scan:
+
+1. Navigate to the **Scans** page.
+2. Click the button next to your repository.
+3. Select the guideline and the path you want to scan.
+4. Start the scan.
+
+The scan runs only against the path you chose and reports violations for the selected guideline, so results come back quickly.
 
 #### Running a PR scan
 
