@@ -332,7 +332,8 @@ To run a full repository scan:
 2. Select the repository you want to scan.
 3. Click the play button.
 4. Choose the guideline you want to scan against.
-5. Start the scan.
+5. For the path, select the full repository (the repository root) — not a folder underneath it. This is what makes it a full scan rather than a targeted one.
+6. Start the scan.
 
 Full repository scans analyze the repository while respecting configured scan policies, ignored paths, and repository overrides.
 
@@ -349,9 +350,12 @@ Use a targeted scan when you want to:
 To run a targeted scan:
 
 1. Navigate to the **Scans** page.
-2. Click the button next to your repository.
+2. Click the **Play** button next to your repository.
 3. Select the guideline and the path you want to scan.
-4. Start the scan.
+4. Choose whether to apply your scan policies using the **scan policies** toggle (see below).
+5. Start the scan.
+
+By default, a targeted scan respects your configured scan policies — Included Paths, Guideline Scoping, and Excluded Paths. Turn the **scan policies** toggle off to ignore those policies and scan the exact path you selected regardless of them, which is useful when you want to validate a guideline against a path that your policies would normally exclude or scope away. Leave it on to have the targeted scan behave consistently with your full repository and PR scans.
 
 The scan runs only against the path you chose and reports violations for the selected guideline, so results come back quickly.
 
