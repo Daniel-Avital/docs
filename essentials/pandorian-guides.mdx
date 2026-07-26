@@ -314,10 +314,11 @@ Use these workflows to run scans, review violations, and enforce guidelines in p
 
 ### Running a Repository Scan
 
-Pandorian supports three scan types:
+Pandorian supports four scan types:
 
 - **Full repository scans**
 - **Targeted scans**
+- **Scheduled scans**
 - **PR scans**
 
 A full repository scan analyzes the entire repository against selected guidelines. A targeted scan analyzes a single path in the repository, so it finishes faster and is ideal for quickly validating a guideline. A PR scan analyzes the code changes in a pull request.
@@ -358,6 +359,23 @@ To run a targeted scan:
 By default, a targeted scan respects your configured scan policies — Included Paths, Guideline Scoping, and Excluded Paths. Turn the **scan policies** toggle off to ignore those policies and scan the exact path you selected regardless of them, which is useful when you want to validate a guideline against a path that your policies would normally exclude or scope away. Leave it on to have the targeted scan behave consistently with your full repository and PR scans.
 
 The scan runs only against the path you chose and reports violations for the selected guideline, so results come back quickly.
+
+#### Scheduled Scans
+
+Scheduled scans run a repository scan automatically on a recurring schedule you define, so you get ongoing visibility into guideline compliance without kicking off a scan by hand each time.
+
+You configure scheduled scans from the **Repositories** page. Next to the **Play** button for a repository, click the **calendar** button to open the **Scheduled Scans** page for that repository, where you can review existing scheduled scans and add new ones.
+
+#### Adding a scheduled scan
+
+On the Scheduled Scans page, add a scheduled scan and configure it:
+
+1. **Name** — Give the scheduled scan a name so you can recognize it later.
+2. **Schedule** — Define when it runs using a cron expression. As you type, live text below the field translates the expression into plain-language run times, so you can confirm the schedule is what you intended before saving.
+3. **Guideline and path** — Choose the guideline to scan against and the path to scan, the same way you would for a targeted scan. Select the repository root to scan the full repository, or a folder underneath it to scope the scheduled scan to that path.
+4. **Scan policies** — Decide whether the scheduled scan should apply your configured scan policies (Included Paths, Guideline Scoping, and Excluded Paths) or ignore them, using the same toggle as a targeted scan.
+
+Once saved, the scan runs automatically on the schedule you defined. Results appear on the **Scans** page alongside your manual and PR scans.
 
 #### Running a PR scan
 
