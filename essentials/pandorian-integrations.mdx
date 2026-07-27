@@ -136,71 +136,60 @@ The policy is defined in a `.pandorian/.policy` file inside the repo and is appl
 ### Repository Policy Schema
 
 ```yaml
-# Guidelines to apply — only guidelines tagged with the specified tag will run
-repository_guidelines_tags:
-  - guideline_tag: string
-
 # Exclusions — skip files or directories from analysis using glob patterns
-# Useful for vendor code, generated files, or any paths that shouldn't be scanned
 exclusions:
   - type: glob
     value: string
     case_sensitive: bool
 
-# Inclusions — apply a specific guideline only to a specific path inside the repository
-# Uses glob patterns to scope guideline enforcement to relevant directories or file types
+# Inclusions — apply specific guidelines (by tag) to specific paths
 inclusions:
-  - guideline_tag: string
-    path_pattern:
-      - type: glob
-        value: string
-        case_sensitive: bool
+  - tags: [string]
+    rule:
+      type: glob
+      value: string
+      case_sensitive: bool
+
+# Path Inclusions — restrict the entire scan to specific paths
+path_inclusions:
+  - type: glob
+    value: string
+    case_sensitive: bool
 ```
 
 ### Comprehensive Configuration Example
 
 ```yaml
-# Guidelines Configuration
-repository_guidelines_tags:
-  - guideline_tag: v2
-
-# Exclusion Rules
 exclusions:
-  # Exclude vendor directories
   - type: glob
     value: "vendor/**"
     case_sensitive: true
-
-  # Exclude generated protobuf files
   - type: glob
     value: "**/*.pb.go"
     case_sensitive: true
-
-  # Exclude test files
   - type: glob
     value: "**/*_test.go"
     case_sensitive: true
-
-  # Exclude node_modules
   - type: glob
     value: "node_modules/**"
     case_sensitive: true
 
-# Inclusion Rules
 inclusions:
-  # Apply security guidelines only to the auth service path
-  - guideline_tag: security
-    path_pattern:
-      - type: glob
-        value: "src/auth/**"
-        case_sensitive: true
+  - tags: [security]
+    rule:
+      type: glob
+      value: "src/auth/**"
+      case_sensitive: true
+  - tags: [data-storage, performance]
+    rule:
+      type: glob
+      value: "db/migrations/**"
+      case_sensitive: true
 
-  # Apply data guidelines only to migration files
-  - guideline_tag: data-storage
-    path_pattern:
-      - type: glob
-        value: "db/migrations/**"
-        case_sensitive: true
+path_inclusions:
+  - type: glob
+    value: "src/**"
+    case_sensitive: true
 ```
  
 ---
