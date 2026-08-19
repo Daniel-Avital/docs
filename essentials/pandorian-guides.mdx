@@ -102,7 +102,7 @@ To import guidelines:
 3. Choose one of the import options:
    - **from Confluence**
    - **from File**
-   - **from Catalog**
+   - **from Library**
 
 Pandorian extracts the source text and returns editable guidelines for review. Imported guidelines are not active by default, so you can inspect and edit them before enabling enforcement.
 
@@ -156,27 +156,27 @@ For setup details, see [Guidelines as Code](/essentials/pandorian-integrations#g
 
 ---
 
-### Using the Guidelines Catalog
+### Using the Library
 
-The Guidelines Catalog gives you a starting point for common engineering standards across supported languages and categories.
+Using the Library
 
-To import a catalog guideline:
+The Library gives you a starting point for common engineering standards across supported languages and categories. It is organized into Guidelines, individual standards you can add on their own, and Packages, curated guideline sets built around common use cases across domains such as Cloud Platforms, Containers/Kubernetes/IaC, Data and Storage, Messaging/Events/Jobs, APIs, Security, Compliance Frameworks, Regulatory Regimes, Industry, Architecture/Quality/Reliability/Observability, and language-specific best practices.
 
-1. Navigate to the **Guidelines** page.
-2. Click **+ New Guideline**.
-3. Select **from Catalog**.
-4. Browse or search for a guideline.
-5. Import the guideline into your organization.
-6. Choose its enforcement mode.
-7. Add tags if you want to use it with scan policies.
+To install a package:
 
-You can browse the catalog by language and category, or search by keyword.
+1. Navigate to the Library page.
+2. Browse or search for a package.
+3. Click the package to view its contents.
+4. Install the entire package, or select individual guidelines from within it.
+5. Select the language you want the guidelines to run on.
+6. After adding the guidelines, you can navigate to the guidelines page and choose the enforcement mode for each guideline you added.
+7. Add tags if you want to use them with scan policies.
 
-The in-product catalog is the same catalog available at [pandorian.ai/catalog](https://pandorian.ai/catalog).
+You can browse and add individual guidelines the same way, without installing a full package.
 
-When you import a catalog guideline, it becomes a guideline in your organization. It does not remain linked to the public catalog. You can configure how it should behave in your environment, including whether it should run in Monitor mode or Block Build mode.
+When you install a guideline from the Library, it becomes a guideline in your organization. It does not remain linked back to the Library, and it is fully editable so you can tailor it to your codebase. You can configure how it should behave in your environment, including whether it should run in Monitor mode or Block Build mode.
 
-Catalog guidelines cannot be scoped directly from the catalog itself. To scope them, add useful tags and then use Scan Policies to decide where those tagged guidelines should run.
+Library guidelines cannot be scoped directly from within the Library itself. To scope them, add useful tags and then use Scan Policies to decide where those tagged guidelines should run.
 
 ---
 
@@ -280,7 +280,7 @@ Initiatives group any guidelines and any repos you choose under a program you de
  
 An Initiative is a named container, not a preset compliance template. If your org can describe something as "these guidelines, on these repos," it can be an Initiative — a migration, a security push, a performance commitment, or a standard one team is rolling out to the rest of the org.
  
-**Pick the guidelines.** Guidelines attached to an Initiative can come from the catalog, your own imported standards, or anything written from scratch. The Initiative only needs to know which guidelines count toward this specific program.
+**Pick the guidelines.** Guidelines attached to an Initiative can come from the library, your own imported standards, or anything written from scratch. The Initiative only needs to know which guidelines count toward this specific program.
  
 **Attach the repos.** Attach only the repositories the program actually applies to. A SOC 2 Initiative might only need the services that touch customer data; a performance Initiative might need whatever is user-facing and latency-sensitive. A repository can belong to more than one Initiative at once, since a single service can fall under OWASP Top 10, SOC 2, and an internal API standard simultaneously.
  
@@ -656,7 +656,7 @@ Because SSO setup depends on the customer's identity provider, the Pandorian tea
 
 Pandorian can connect more than one git organization — across GitHub, GitLab, 
 or Azure DevOps — to a single account. Each connected org gets its own view, with 
-its own guideline catalog, scan history, and UI, all managed from that one account. 
+its own guidelines, scan history, and UI, all managed from that one account. 
 Data is not merged between orgs.
 
 For setup details, see [Multi-Org Governance](/essentials/pandorian-integrations#multi-org-governance).
