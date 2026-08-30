@@ -77,7 +77,7 @@ Each Markdown file must contain a YAML frontmatter block with a `pandorian-metad
 | `id` | string | Unique identifier (e.g., `scala-expert`) |
 | `language_ids` | string | Target languages (e.g., `scala`, `python`) |
 | `title` | string | Clear, actionable rule name |
-| `block` | boolean | `true` to block on violation; `false` defaults to monitor |
+| `block_build` | boolean | `true` to block on violation; `false` defaults to monitor |
 | `category` | string | Area of focus (e.g., `security`, `performance`) |
 | `is_active` | boolean | Whether this guideline is currently enforced |
 | `tags` | list | Strings for filtering and organization |
@@ -100,7 +100,7 @@ pandorian-metadata:
   id: scala-expert
   language_ids: [scala]
   title: Scala Functional Programming Expert
-  block: true
+  block_build: true
   category: Architecture
   is_active: true
   tags: [scala, functional-programming, cats, fs2]
@@ -140,7 +140,7 @@ valid Guidelines-as-Code — frontmatter, metadata, and rule body included.
 4. Commit the downloaded `.md` file(s) to your designated guidelines directory
 
 The exported file is already valid Guidelines-as-Code. It carries over
-`language_ids`, `title`, `block`, `category`, `is_active`, and `tags` exactly
+`language_ids`, `title`, `block_build`, `category`, `is_active`, and `tags` exactly
 as configured in the UI, so you can paste the contents straight into your
 guidelines directory with no reformatting. 
 ---
