@@ -80,6 +80,7 @@ Each Markdown file must contain a YAML frontmatter block with a `pandorian-metad
 | `block_build` | boolean | `true` to block on violation; `false` defaults to monitor |
 | `category` | string | Area of focus (e.g., `security`, `performance`) |
 | `is_active` | boolean | Whether this guideline is currently enforced |
+| `account_level` | boolean | Whether this guideline should be globally enforced on all organizations within the account  |
 | `tags` | list | Strings for filtering and organization |
 
 ### Supported Categories
@@ -103,6 +104,7 @@ pandorian-metadata:
   block_build: true
   category: Architecture
   is_active: true
+  account_level: false
   tags: [scala, functional-programming, cats, fs2]
 ---
 
