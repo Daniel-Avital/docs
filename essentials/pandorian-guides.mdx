@@ -91,6 +91,36 @@ A recommended rollout is:
 
 ---
 
+### Using the Guideline Wizard
+
+The Guideline Wizard turns a plain-language description of what you want to enforce into a precise, enforceable guideline. Use it when you know the rule you want but don't want to write the guideline text yourself.
+
+To use the Guideline Wizard:
+
+1. Navigate to the **Guidelines** page.
+2. Click **+ New Guideline**.
+3. Select **Guideline Wizard**.
+4. Fill in the fields below.
+5. Review the generated guideline, edit it if needed, and save.
+
+The wizard includes the following fields:
+
+- **Languages:** The language or languages the guideline should apply to.
+- **What do you want to enforce?** A short summary of the rule, up to 60 characters. Keep it specific and focus on one enforceable pattern. For example: *Prevent sensitive data from being logged.*
+- **Tell us more:** Describe what you want to prevent or require in your own words, up to 600 characters. Include examples if you have them. You don't need to phrase it as a rule; Pandorian handles that.
+- **Any exceptions? (optional):** Describe when the pattern should not be considered a violation, up to 400 characters. If you're not sure, leave it blank.
+- **Advanced context (optional):** Narrow the generated guideline to your cloud provider and runtime, so suggestions match your environment.
+
+#### Tips for better results
+
+- Describe one pattern per guideline. If you want to enforce several things, run the wizard once for each.
+- Name the risky pattern and the expected behavior, the same way you would when [writing a strong guideline](#writing-a-strong-guideline).
+- Use the exceptions field to cut noise early, for example by excluding test files or a specific internal wrapper.
+
+As with any new guideline, start in **Monitor only** mode and validate it with a PR scan or targeted scan before moving to **Block Build**. See [Testing a new guideline](#testing-a-new-guideline).
+
+---
+
 ### Importing Guidelines from Confluence or Markdown
 
 Use imports when your engineering standards already exist in another place, such as Confluence pages or Markdown files used by engineering teams or AI coding agents.
@@ -180,6 +210,23 @@ Library guidelines cannot be scoped directly from within the Library itself. To 
 
 ---
 
+### Guideline Version History
+
+Every guideline keeps a version history. When you edit and save a guideline, Pandorian saves the change as a new version, and earlier versions stay available to view.
+
+To view a previous version:
+
+1. Navigate to the **Guidelines** page.
+2. Open the guideline.
+3. Use the version selector to browse its older versions and compare them with the latest one.
+
+Previous versions are read-only, and you can't revert a guideline to an older version. If you need an older version to keep running, you have two options:
+
+- **For specific repositories:** Use [Guideline Pins](#repository-overrides) in Scan Policies to lock those repositories to the older version.
+- **Everywhere:** Create a new guideline based on the older version's content.
+
+---
+
 ### Dynamic Context Providers
 
 Some guidelines need live context, not just static text.
@@ -255,6 +302,8 @@ Repository overrides customize scan policy for a specific repository. Every repo
 
 **Excluded Paths:** The same exclusion mechanism as the organization level, but scoped to this repository only, and checked before organization-level Excluded Paths — and, like all Excluded Paths, only reached if the file isn't already covered by Guideline Scoping.
 
+**Guideline Pins:** Lock a guideline to a specific version for this repository. By default, every guideline runs on its latest version. Pinning keeps the repository on a version you've already validated, so later edits to that guideline don't change its results here until you're ready. To pin, select the guideline, choose the version, and click **Pin**. Remove the pin to return the repository to the latest version. Guideline Pins exist only at the repository level and don't affect which files are scanned.
+
 #### Examples
 
 **Limiting a noisy repo's scan surface:**
@@ -272,24 +321,9 @@ Your organization excludes `**/generated/**` org-wide. Repository-level Guidelin
 **Overriding org defaults for a legacy repository:**
 Your org-wide policy excludes test files. A legacy repo requires the opposite — tests are the only place certain patterns are enforced. Add a repository-level Excluded Paths override for that repo's non-test files, without affecting the rest of the organization.
 
----
+**Keeping a critical repo on a validated guideline version:**
+You're refining a guideline that runs in Block Build mode, and the new version still needs testing. Pin your payments repository to `v1` so its builds keep running against the version you trust, while other repositories pick up the latest version. Remove the pin once the new version is validated.
 
-### Initiatives
- 
-Initiatives group any guidelines and any repos you choose under a program you define — whether that's OWASP Top 10, SOC 2 Type II, an internal architecture standard, or a goal specific to your org. There is no fixed list of programs Pandorian ships with. Each Initiative shows a live compliance percentage that updates as scans run.
- 
-An Initiative is a named container, not a preset compliance template. If your org can describe something as "these guidelines, on these repos," it can be an Initiative — a migration, a security push, a performance commitment, or a standard one team is rolling out to the rest of the org.
- 
-**Pick the guidelines.** Guidelines attached to an Initiative can come from the library, your own imported standards, or anything written from scratch. The Initiative only needs to know which guidelines count toward this specific program.
- 
-**Attach the repos.** Attach only the repositories the program actually applies to. A SOC 2 Initiative might only need the services that touch customer data; a performance Initiative might need whatever is user-facing and latency-sensitive. A repository can belong to more than one Initiative at once, since a single service can fall under OWASP Top 10, SOC 2, and an internal API standard simultaneously.
- 
-**Track one live percentage.** Every Initiative shows a compliance percentage calculated from its own attached guidelines and repos, refreshed as scans run. This gives leadership a number they can check without pinging teams for a status update — for a compliance audit, a migration, or any other program.
- 
-#### Initiatives vs. tags
- 
-A tag (or category like Security) groups guidelines by type. An Initiative groups a specific subset of guidelines and repos into one trackable unit with its own score, regardless of category. Use tags to organize and scope guidelines; use Initiatives to measure progress against a defined program.
- 
 ---
 
 ### Policy as Code
@@ -566,9 +600,20 @@ Three summary metrics sit at the top of the dashboard:
 * **Active Guidelines** — how many guidelines are currently enabled across your organization.
 * **Total Violations** — the combined count of open and merged violations.
 
+#### Time range
+
+Use the time range selector at the top of the dashboard to choose the period the dashboard covers:
+
+- Last day
+- Last 7 days (default)
+- Last 30 days
+- Custom
+
+Violation metrics and statistics, including the Open and Merged panels below, update to match the selected range. Use a short range to watch recent activity, or a longer one to spot trends.
+
 #### Violations Stats
 
-Violations are split into two panels, each covering a rolling 7-day window:
+Violations are split into two panels, both scoped to the selected time range:
 
 **Open Violations:** Findings currently in your pipeline — detected on pull requests that haven't merged yet. Use this to see what's about to land on your main branch if left unaddressed.
 
@@ -579,7 +624,7 @@ Each panel breaks its violations down by category in a donut chart — Architect
 * **Most Violated Guidelines** — the specific guidelines generating the most findings in that panel, ranked by count. Click **Show all** to see the complete list.
 * **Most Affected Repos** — which repositories contain the most violations for that panel.
 
-Because Open and Merged track different windows, the same guideline can show up in both lists with very different counts. A high Open count paired with a low Merged count usually means the team is catching violations before merge; a high Merged count means violations are reaching the main branch unaddressed.
+Because Open and Merged track different stages of the pipeline, the same guideline can show up in both lists with very different counts. A high Open count paired with a low Merged count usually means the team is catching violations before merge; a high Merged count means violations are reaching the main branch unaddressed.
 
 
 ---
@@ -660,3 +705,19 @@ its own guidelines, scan history, and UI, all managed from that one account.
 Data is not merged between orgs.
 
 For setup details, see [Multi-Org Governance](/essentials/pandorian-integrations#multi-org-governance).
+
+---
+
+### Filtering Repositories by Custom Properties
+
+Pandorian syncs custom properties from your GitHub organization, so you can filter repositories in Pandorian using the same metadata your team already maintains in GitHub, such as team, service tier, business unit, or compliance scope.
+
+Custom properties are available for GitHub organizations only.
+
+Custom properties are managed in GitHub, not in Pandorian:
+
+1. Define custom properties in your GitHub organization's settings and assign values to your repositories.
+2. Pandorian stays in sync automatically. When a property changes in GitHub, the update is reflected in Pandorian right away.
+3. On the **Repositories** page, filter repositories by property and value.
+
+Custom properties are used for filtering repositories only. They can't be used in Scan Policies.
