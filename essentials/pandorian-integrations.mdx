@@ -233,13 +233,43 @@ When creating or editing a guideline, add a provider with:
 
 ### Setting Up Slack Notifications
 
-1. Navigate to **Settings → Integrations**
+1. Navigate to the **Integrations** tab
 2. Click **Connect Slack**
 3. Authorize Pandorian to access your Slack workspace
 4. Choose the notification channel
 5. Configure alerts for scan completed or scan failed events
 
 Each alert includes a direct link to the scan results in the Pandorian dashboard.
+
+---
+
+## Webhooks
+
+Webhooks send Pandorian alerts to your own HTTPS endpoint, such as a SIEM, an internal service, or an automation tool.
+
+A webhook alert is sent whenever a scan completes with at least one violation.
+
+### Adding a Webhook Endpoint
+
+1. Navigate to the **Integrations** tab
+2. Add a webhooks endpoint
+3. Enter a **Channel Name** to identify the endpoint (e.g., "SIEM intake")
+4. Enter the **curl command** for your endpoint
+5. Click **Test Connection** to confirm Pandorian can reach it
+6. Click **Add Channel**
+
+### How the Request Is Built
+
+Pandorian reads the method, URL, and headers from your curl command and sends the violation report as a JSON body. Any `-d` data in the command is ignored, and only `https` URLs are supported.
+
+Example curl command:
+
+```bash
+curl -X POST https://example.com/hooks/pandorian \
+  -H 'Authorization: Bearer <token>'
+```
+
+Use headers for any authentication your endpoint requires, such as a bearer token.
 
 ---
 
