@@ -252,6 +252,19 @@ Scan Policies let you define exactly which files Pandorian scans, which guidelin
 
 Navigate to **Scan Policies** in the Pandorian dashboard to configure.
 
+#### Org Guidelines Scan Mode
+
+The Org Guidelines Scan Mode controls how your organization's guidelines run on pull requests. Only account Owners can change this setting.
+
+- **Run everywhere:** Org guidelines scan every PR in a matching language. For example, on a Java PR, every active Java guideline runs.
+- **Opt-In only:** Org guidelines scan only where they're scoped. Instead of every guideline that matches the PR's language running automatically, you decide which guidelines run and where, using Guideline Scoping in Repository Overrides.
+
+In Opt-In only mode, Organization Policy (organization-level Excluded Paths and Guideline Scoping) is disabled, because organization-wide rules don't apply. To edit Organization Policy, switch the Org Guidelines Scan Mode back to **Run everywhere**.
+
+This setting applies to PR scans only. Full repository, targeted, and scheduled scans always run the single guideline you select, so the scan mode doesn't affect them.
+
+Account-level guidelines aren't affected by this setting. They always scan every PR in a matching language. For more on account-level guidelines, see [Guidelines as Code](/essentials/pandorian-integrations#guidelines-as-code).
+
 #### Evaluation order
 
 For a file in a repository, Pandorian checks the following in order. As soon as one applies, evaluation stops for that file:
@@ -287,6 +300,8 @@ flowchart TD
 #### Organization Policy
 
 Organization-level policy applies across all repositories by default, and is checked after any repository-level settings.
+
+Organization Policy is available only when the [Org Guidelines Scan Mode](#org-guidelines-scan-mode) is set to **Run everywhere**.
 
 **Guideline Scoping:** Restrict a guideline group to specific paths across the organization. Rather than running all guidelines across the entire codebase, Guideline Scoping lets you target enforcement by tag — for example, applying security guidelines only to the auth service, or data guidelines only to migration files. Click **Add scoping** to configure.
 
@@ -721,3 +736,15 @@ Custom properties are managed in GitHub, not in Pandorian:
 3. On the **Repositories** page, filter repositories by property and value.
 
 Custom properties are used for filtering repositories only. They can't be used in Scan Policies.
+
+---
+
+### Plan and Usage
+
+The **Usage** page shows your current plan and how much of it you've used. It's available to Owners, Admins, Maintainers, and account Owners.
+
+- **Time left in your plan:** How much time remains on your plan, and the date it ends.
+- **Monthly limits:** Limits that reset every month, with the next reset date shown. These cover Pull Requests, Full Repository Scans, and Generated Fixes.
+- **Global limits:** Fixed limits included in your plan, which don't reset. These cover Users and Active Guidelines.
+
+Each limit shows how much you've used, the plan limit, how much remains, and the percentage used. Limits that aren't capped on your plan are marked **Unlimited**.
