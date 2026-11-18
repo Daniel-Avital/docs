@@ -415,6 +415,8 @@ Scheduled scans run a repository scan automatically on a recurring schedule you 
 
 You configure scheduled scans from the **Repositories** page. Next to the **Play** button for a repository, click the **calendar** button to open the **Scheduled Scans** page for that repository, where you can review existing scheduled scans and add new ones.
 
+Only Account Owners, Owners, and Admins can add or edit scheduled scans. Maintainers can view them.
+
 #### Adding a scheduled scan
 
 On the Scheduled Scans page, add a scheduled scan and configure it:
@@ -650,7 +652,7 @@ Use these workflows to bring your team into Pandorian and manage access.
 
 ### Onboarding Users
 
-Admins can invite users from the **Users** page.
+Account Owners, Owners, and Admins can invite users from the **Users** page.
 
 To invite a user:
 
@@ -667,31 +669,63 @@ Users are invited one at a time.
 
 #### Roles
 
-Pandorian supports four roles:
+Pandorian has four organization roles: **Owner**, **Admin**, **Maintainer**, and **Member**. There is also an account-level **Account Owner** role, described below.
 
 **Owner**
 
-Full access to all organization settings and resources.
+Full access to all organization settings and resources, including billing.
 
-Use this for the person responsible for the Pandorian organization, billing, security-sensitive settings, and top-level administration.
+Use this for the person responsible for the Pandorian organization, billing, and top-level administration.
 
 **Admin**
 
-Administrative access with user management capabilities.
+The same access as Owner, except billing. Admins can manage users, integrations, API keys, and scheduled scans.
 
-Use this for team members who need to manage users and help administer the organization.
+Use this for team members who help administer the organization but don't own billing.
 
 **Maintainer**
 
-Can manage repositories and guidelines.
+Can manage repositories, guidelines, scans, violations, and scan policies, and can import guidelines from Confluence or files. Maintainers can view integrations and scheduled scans but can't change them, and they can't manage users or API keys.
 
 Use this for platform engineers, architects, or engineering leads who own guideline creation, repository setup, and day-to-day rule management.
 
 **Member**
 
-Basic access to view and contribute.
+Read-only access to repositories, guidelines, the Library, scans, and violation results.
 
-Use this for developers or stakeholders who need access to Pandorian but should not manage organization-wide settings.
+Use this for developers or stakeholders who need visibility into Pandorian but shouldn't change guidelines, scans, or settings.
+
+#### Permissions by role
+
+| Capability | Owner | Admin | Maintainer | Member |
+| --- | :---: | :---: | :---: | :---: |
+| View repositories, guidelines, Library, scans, and results | ✓ | ✓ | ✓ | ✓ |
+| View running scans | ✓ | ✓ | ✓ | ✓ |
+| View organization details, plan, integrations, and events | ✓ | ✓ | ✓ | ✓ |
+| Create, edit, and delete repositories | ✓ | ✓ | ✓ | — |
+| Create, edit, and delete guidelines | ✓ | ✓ | ✓ | — |
+| Import guidelines from Confluence or files | ✓ | ✓ | ✓ | — |
+| Run, edit, and delete scans | ✓ | ✓ | ✓ | — |
+| Manage violations (for example, archive) | ✓ | ✓ | ✓ | — |
+| View and edit scan policies | ✓ | ✓ | ✓ | — |
+| Manage organization details | ✓ | ✓ | ✓ | — |
+| View plan usage | ✓ | ✓ | ✓ | — |
+| View scheduled scans | ✓ | ✓ | ✓ | — |
+| Create and edit scheduled scans | ✓ | ✓ | — | — |
+| Connect and edit integrations | ✓ | ✓ | — | — |
+| Manage organization events and actions | ✓ | ✓ | — | — |
+| View, invite, and manage users | ✓ | ✓ | — | — |
+| Manage API keys | ✓ | ✓ | — | — |
+| View and manage billing | ✓ | — | — | — |
+
+#### Account Owner
+
+The Account Owner role sits above the organization roles. Account Owners have full access to every git organization connected to the account (see [Multi-Org Governance](#multi-org-governance)), with everything an Owner can do in each one, plus account-level settings.
+
+On top of full organization access, Account Owners can:
+
+- Create and edit account-level guidelines, which scan every PR in a matching language across the account.
+- View and edit account-level policy, including the [Org Guidelines Scan Mode](#org-guidelines-scan-mode).
 
 ---
 
