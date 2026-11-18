@@ -744,6 +744,20 @@ Pandorian supports common SSO setups, including providers such as:
 
 Users can be created automatically on first login. SSO can be required for all users. Role mapping is supported, but roles are not automatically assigned unless configured as part of the SSO setup.
 
+#### Mapping roles through SSO
+
+To assign roles through your identity provider (for example, Okta), configure it to send Pandorian the role identifier for each user. The value must match one of the following identifiers exactly:
+
+| Role | Identifier |
+| --- | --- |
+| Account Owner | `ACCOUNT_OWNER` |
+| Owner | `OWNER` |
+| Admin | `ADMIN` |
+| Maintainer | `MAINTAINER` |
+| Member | `MEMBER` |
+
+The Pandorian team will confirm which attribute should carry the role identifier during SSO setup.
+
 Because SSO setup depends on the customer's identity provider, the Pandorian team will guide the configuration process and confirm the required metadata, domain settings, and testing steps during onboarding.
 
 ### Multi-Org Governance
